@@ -1,0 +1,16 @@
+# Dependências e artefatos
+node_modules/
+dist/
+build/
+coverage/
+
+# Segredos
+.env
+.env.*
+!.env.example
+
+# Configurações locais
+.claude/settings.local.json
+
+# PDFs de origem: trazem dados da equipe e o repositório é público
+docs/*.pdf
