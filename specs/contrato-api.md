@@ -6,6 +6,7 @@ Fonte: [09] §06. Status geral: `proposto`.
 
 | Método e rota | Função | Quem acessa |
 |---|---|---|
+| `GET /health` | Verificar se a API está no ar | Infraestrutura |
 | `POST /auth/login` | Abrir sessão | Empreendedor e parceiro |
 | `POST /auth/refresh` | Renovar sessão | Empreendedor e parceiro |
 | `POST /consents` | Conceder consentimento | Empreendedor |
@@ -18,6 +19,14 @@ Fonte: [09] §06. Status geral: `proposto`.
 | `POST /tracks/:id/progress` | Registrar progresso | Empreendedor |
 | `GET /partners/:id/metrics` | Indicadores agregados | Parceiro |
 | `POST /webhooks/whatsapp` | Receber mensagens do canal | WhatsApp Business |
+
+## Formato de erro
+
+Status: `definido` na funcionalidade 001. Todo erro responde com o status HTTP adequado e este corpo:
+
+```json
+{ "error": { "code": "not_found", "message": "Recurso não encontrado." } }
+```
 
 ## Faltam no contrato
 

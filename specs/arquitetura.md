@@ -1,6 +1,6 @@
 # Arquitetura
 
-Fonte: [09]. A documentação da stack, quando chegar, prevalece sobre este arquivo.
+Fonte: [09] e [decisão 0002](decisoes/0002-stack-do-back-end.md).
 
 **Status usados:** `definido`, `proposto`, `a validar` e `em conflito`.
 
@@ -9,15 +9,16 @@ Fonte: [09]. A documentação da stack, quando chegar, prevalece sobre este arqu
 | Camada | Tecnologia | Status |
 |---|---|---|
 | Runtime do back-end | Node.js | `definido` |
-| Framework da API | Express ou Fastify | `proposto` (P-12) |
-| Linguagem | TypeScript ou JavaScript | `a validar` (P-12) |
+| Framework da API | Express | `definido` |
+| Linguagem | TypeScript | `definido` |
 | Banco de dados | MySQL (InnoDB) | `definido` |
-| Acesso a dados e migrações | Prisma ou Knex | `proposto` (P-12) |
+| Acesso a dados e migrações | Prisma | `definido` |
 | Tarefas em segundo plano | Worker em Node.js com node-cron | `proposto` |
-| Validação de entrada | zod ou joi | `proposto` |
-| Testes | Jest e Supertest; Playwright ponta a ponta | `proposto` |
-| Qualidade | ESLint, Prettier e CI | `proposto` |
-| Front-end (fora do escopo deste trabalho) | React e Next.js | `definido` |
+| Validação de entrada | zod | `definido` |
+| Testes | Jest e Supertest | `definido` |
+| Testes ponta a ponta | Playwright | `proposto` |
+| Qualidade | ESLint, Prettier e CI | `definido` |
+| Front-end (outra frente de trabalho) | React e Next.js | `definido` |
 | Hospedagem | Servidor local | `definido` |
 | Provisionamento | Linux, Docker Compose e Nginx | `proposto` |
 
@@ -68,7 +69,7 @@ O worker é o único serviço que chama as APIs externas de dados. A API atende 
 
 ## Estrutura do repositório
 
-Sugestão de [09], `a validar` (P-12): monorepo com `apps/web`, `apps/api`, `apps/worker` e `packages/shared`.
+Status: `definido`. Monorepo com npm workspaces, com `apps/web`, `apps/api`, `apps/worker` e `packages/shared`. O `apps/web` fica neste repositório, mas é de outra frente de trabalho. Cada pasta é criada quando a primeira funcionalidade precisar dela.
 
 ## Operação
 

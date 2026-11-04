@@ -16,6 +16,7 @@ Lacunas e conflitos encontrados nos documentos. Ao resolver um item, remova-o da
 | P-08 | Não está definido como acessar o Open Finance (participação regulada ou intermediário), e o limite jurídico da automação continua em aberto desde [01] | 015 |
 | P-09 | Não há tabela para eventos de uso, sessão ou renovação e importações de extrato | 002, 003, 006, 016 |
 | P-10 | Não está claro qual serviço envia alertas: o worker dispara, mas a API é quem responde pelo WhatsApp | 011, 013 |
+| P-13 | O backlog não tem item para provisionamento (`docker-compose.yml`, Dockerfiles e Nginx), embora [09] §11 o coloque como segundo passo | Backlog |
 
 ## Conflitos
 
@@ -27,7 +28,7 @@ Lacunas e conflitos encontrados nos documentos. Ao resolver um item, remova-o da
 
 | ID | Decisão | Afeta |
 |---|---|---|
-| P-12 | TypeScript ou JavaScript; Express ou Fastify; Prisma ou Knex; monorepo ou repositórios separados; servidor local só no piloto ou também na operação; canal inicial (WhatsApp, app web ou ambos). A documentação da stack deve resolver parte delas | 001, 013 |
+| P-12 | Servidor local só no piloto ou também na operação; canal inicial (WhatsApp, app web ou ambos) | 013 |
 
 ## Limite da leitura dos documentos
 

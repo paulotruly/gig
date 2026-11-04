@@ -1,6 +1,6 @@
 # GiG (Greed is Great): back-end
 
-Plataforma de gestão financeira e educação empreendedora para MEIs, startups e pequenos negócios. Este projeto cuida do back-end e segue desenvolvimento orientado a especificações: `specs/` é a fonte da verdade.
+Plataforma de gestão financeira e educação empreendedora para MEIs, startups e pequenos negócios. O repositório é um monorepo com todo o produto, e este trabalho cuida do back-end (`apps/api`, `apps/worker` e `packages/shared`). O `apps/web` é de outra frente de trabalho. O projeto segue desenvolvimento orientado a especificações: `specs/` é a fonte da verdade.
 
 ## Início de cada sessão
 
