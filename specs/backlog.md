@@ -6,7 +6,7 @@ Ordem baseada em [09] §11, restrita ao back-end e com os itens que faltavam nos
 
 | # | Funcionalidade | Depende de | Pendências | Situação |
 |---|---|---|---|---|
-| 001 | Fundação da API: projeto, lint, testes, CI, healthcheck e logs | | | `em andamento` |
+| 001 | Fundação da API: projeto, lint, testes, CI, healthcheck e logs | | | `concluída` |
 | 002 | Modelo de dados e migrações iniciais | 001 | P-02, P-05, P-09, P-11 | `a fazer` |
 | 003 | Cadastro, autenticação e sessão | 002 | P-01, P-04, P-09 | `a fazer` |
 | 004 | Negócios e isolamento por `business_id` | 003 | P-01 | `a fazer` |

@@ -17,6 +17,7 @@ Lacunas e conflitos encontrados nos documentos. Ao resolver um item, remova-o da
 | P-09 | Não há tabela para eventos de uso, sessão ou renovação e importações de extrato | 002, 003, 006, 016 |
 | P-10 | Não está claro qual serviço envia alertas: o worker dispara, mas a API é quem responde pelo WhatsApp | 011, 013 |
 | P-13 | O backlog não tem item para provisionamento (`docker-compose.yml`, Dockerfiles e Nginx), embora [09] §11 o coloque como segundo passo | Backlog |
+| P-14 | O diagrama de [09] §02 diz que o extrato pode ser enviado pelo usuário ou pelo contador, mas `users` não modela o contador nem o acesso dele ao negócio | 003, 006 |
 
 ## Conflitos
 
@@ -29,7 +30,3 @@ Lacunas e conflitos encontrados nos documentos. Ao resolver um item, remova-o da
 | ID | Decisão | Afeta |
 |---|---|---|
 | P-12 | Servidor local só no piloto ou também na operação; canal inicial (WhatsApp, app web ou ambos) | 013 |
-
-## Limite da leitura dos documentos
-
-Os PDFs foram extraídos como texto. Os diagramas das páginas 2 e 8 de [09] não foram lidos, embora o texto ao redor explique as duas arquiteturas. Vale conferi-los ao especificar a 001.

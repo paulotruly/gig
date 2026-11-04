@@ -6,15 +6,17 @@ Atualize este arquivo no mesmo commit de cada entrega. Mantenha-o curto: o hist�
 
 ## Onde paramos
 
-A stack do back-end foi definida e a funcionalidade 001 está especificada. Ainda não há código de aplicação.
+A fundação da API (001) está pronta em `apps/api`, com healthcheck, logs seguros, formato único de erro, testes e CI. Ainda não há banco nem regras de negócio.
 
 ## Funcionalidade em andamento
 
-[001: fundação da API](funcionalidades/001-fundacao-da-api.md).
+Nenhuma.
 
 ## Próximo passo
 
-1. Implementar a funcionalidade 001.
+1. Resolver as pendências P-02, P-05, P-09 e P-11, que afetam o modelo de dados.
+2. Especificar e implementar a funcionalidade 002 (modelo de dados e migrações).
+3. Em paralelo, começar as funções puras da funcionalidade 009, que não dependem do banco.
 
 ## Bloqueios
 

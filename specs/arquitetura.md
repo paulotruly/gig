@@ -26,7 +26,7 @@ Fonte: [09] e [decisão 0002](decisoes/0002-stack-do-back-end.md).
 
 Status: `proposto`.
 
-1. **Entrada:** Open Finance PJ ou entrada assistida.
+1. **Entrada:** Open Finance PJ, entrada assistida e ajustes do usuário (reclassificação de gastos e correção de alertas).
 2. **Núcleo:** classificação, previsão em cenários e orientação.
 3. **Saída:** empreendedor (app web e WhatsApp) e parceiro (somente agregados).
 
