@@ -1,0 +1,12 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+docs
+specs
+**/node_modules
+**/dist
+**/coverage
+infra/nginx/certs
+backups

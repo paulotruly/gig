@@ -6,19 +6,23 @@ Atualize este arquivo no mesmo commit de cada entrega. Mantenha-o curto: o hist�
 
 ## Onde paramos
 
-A fundação da API (001) está pronta em `apps/api`. O restante do [09] está sendo construído a partir das funcionalidades 002 a 017.
+O back-end do [09] está implementado em `apps/api`, `apps/worker`, `packages/shared` e `packages/db`, com testes contra MySQL real. O WhatsApp usa envio simulado, e o Open Finance só tem a interface. O front-end e os testes com Playwright são de outra frente.
 
 ## Funcionalidade em andamento
 
-Nenhuma.
+- [015: Open Finance](funcionalidades/015-open-finance.md): falta o provedor real, que depende da P-08.
+- [017: provisionamento](funcionalidades/017-provisionamento.md): falta validar no CI e em um servidor.
 
 ## Próximo passo
 
-1. Implementar as funcionalidades 002 a 017, na ordem do backlog.
+1. Enviar a branch `tasks` e conferir o CI, inclusive o build das imagens.
+2. Revisar as decisões decorrentes da [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.md).
+3. Subir em um servidor Linux e conferir a 017.
 
 ## Bloqueios
 
-Nenhum.
+- 015: definição de acesso ao Open Finance (P-08).
+- WhatsApp real: conta WhatsApp Business.
 
 ## Últimas decisões
 

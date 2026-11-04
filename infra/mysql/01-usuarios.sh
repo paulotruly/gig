@@ -1,0 +1,14 @@
+#!/bin/sh
+# Roda só na criação do volume. Cria os usuários de privilégio mínimo (regra 4).
+set -eu
+
+mysql --user=root --password="$MYSQL_ROOT_PASSWORD" <<SQL
+CREATE USER '${GIG_APP_USER}'@'%' IDENTIFIED BY '${GIG_APP_PASSWORD}';
+GRANT SELECT, INSERT, UPDATE, DELETE ON \`${MYSQL_DATABASE}\`.* TO '${GIG_APP_USER}'@'%';
+
+CREATE USER '${GIG_METRICS_USER}'@'%' IDENTIFIED BY '${GIG_METRICS_PASSWORD}';
+GRANT SELECT ON \`${MYSQL_DATABASE}\`.\`partner_metrics\` TO '${GIG_METRICS_USER}'@'%';
+
+CREATE USER '${GIG_BACKUP_USER}'@'%' IDENTIFIED BY '${GIG_BACKUP_PASSWORD}';
+GRANT SELECT, SHOW VIEW, TRIGGER, LOCK TABLES, PROCESS ON *.* TO '${GIG_BACKUP_USER}'@'%';
+SQL

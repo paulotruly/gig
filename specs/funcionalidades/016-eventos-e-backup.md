@@ -1,6 +1,6 @@
 # 016: eventos de uso, backup e restauração
 
-**Situação:** `a fazer`
+**Situação:** `concluída`
 **Depende de:** 002
 **Referências:** [09] §10.3, `specs/arquitetura.md`, P-15
 
@@ -16,14 +16,16 @@ Medir o uso sem dados financeiros e garantir que os dados podem ser recuperados.
 
 ## Critérios de aceite
 
-- [ ] C1: Quando vejo a primeira previsão duas vezes, então só há um evento.
-- [ ] C2: Quando restauro um backup em um banco vazio, então os dados voltam.
+- [x] C1: Quando vejo a primeira previsão duas vezes, então só há um evento.
+- [x] C2: Quando restauro um backup em um banco vazio, então os dados voltam.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar os requisitos.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 
 Decisões de escopo em `specs/decisoes/0003-padroes-para-as-lacunas-do-mvp.md`.
+
+Backup e restauração foram executados de verdade, incluindo senha errada, arquivo corrompido, dump com falha e banco de destino com dados. A cópia para fora do servidor é uma tarefa de operação, ainda sem automação.

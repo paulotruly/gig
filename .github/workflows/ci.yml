@@ -11,6 +11,20 @@ permissions:
 jobs:
   verificar:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: senha-so-do-ci
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --password=senha-so-do-ci --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DATABASE_URL_TEST: mysql://root:senha-so-do-ci@127.0.0.1:3306/gig_test?allowPublicKeyRetrieval=true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,5 +36,25 @@ jobs:
       - run: npm run format:check
       - run: npm run typecheck
       - run: npm test
+      - run: npm run test:integration
       - run: npm run build
       - run: npm audit --audit-level=high
+
+  imagens:
+    runs-on: ubuntu-latest
+    env:
+      MYSQL_ROOT_PASSWORD: x
+      MYSQL_DATABASE: gig
+      GIG_APP_USER: x
+      GIG_APP_PASSWORD: x
+      GIG_METRICS_USER: x
+      GIG_METRICS_PASSWORD: x
+      GIG_BACKUP_USER: x
+      GIG_BACKUP_PASSWORD: x
+      FRONTEND_ORIGIN: https://exemplo.test
+      APP_BASE_URL: https://exemplo.test
+      BACKUP_PASSPHRASE: x
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose config --quiet
+      - run: docker compose build

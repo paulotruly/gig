@@ -1,0 +1,101 @@
+# Só o Nginx publica portas. O serviço web entra aqui quando apps/web existir;
+# até lá, o Nginx responde 502 em / e atende /api e /webhooks normalmente.
+services:
+  nginx:
+    image: nginx:1.27
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./infra/nginx/gig.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./infra/nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      target: api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://${GIG_APP_USER}:${GIG_APP_PASSWORD}@mysql:3306/${MYSQL_DATABASE}?allowPublicKeyRetrieval=true
+      DATABASE_URL_PARTNER_METRICS: mysql://${GIG_METRICS_USER}:${GIG_METRICS_PASSWORD}@mysql:3306/${MYSQL_DATABASE}?allowPublicKeyRetrieval=true
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN}
+      APP_BASE_URL: ${APP_BASE_URL}
+      TRUST_PROXY_HOPS: '1'
+      WHATSAPP_APP_SECRET: ${WHATSAPP_APP_SECRET:-}
+      WHATSAPP_VERIFY_TOKEN: ${WHATSAPP_VERIFY_TOKEN:-}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    build:
+      context: .
+      target: worker
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://${GIG_APP_USER}:${GIG_APP_PASSWORD}@mysql:3306/${MYSQL_DATABASE}?allowPublicKeyRetrieval=true
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:-}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  migrate:
+    build:
+      context: .
+      target: migrate
+    restart: 'no'
+    environment:
+      DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD}@mysql:3306/${MYSQL_DATABASE}?allowPublicKeyRetrieval=true
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    command: ['--log-bin-trust-function-creators=1']
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      GIG_APP_USER: ${GIG_APP_USER}
+      GIG_APP_PASSWORD: ${GIG_APP_PASSWORD}
+      GIG_METRICS_USER: ${GIG_METRICS_USER}
+      GIG_METRICS_PASSWORD: ${GIG_METRICS_PASSWORD}
+      GIG_BACKUP_USER: ${GIG_BACKUP_USER}
+      GIG_BACKUP_PASSWORD: ${GIG_BACKUP_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./infra/mysql/01-usuarios.sh:/docker-entrypoint-initdb.d/01-usuarios.sh:ro
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'mysqladmin ping --host=127.0.0.1 --password="$$MYSQL_ROOT_PASSWORD" --silent',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backup:
+    build:
+      context: .
+      dockerfile: infra/backup/Dockerfile
+    restart: unless-stopped
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: ${GIG_BACKUP_USER}
+      MYSQL_PWD: ${GIG_BACKUP_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      BACKUP_PASSPHRASE: ${BACKUP_PASSPHRASE}
+    volumes:
+      # Fora do volume do banco; a cópia para fora do servidor é feita a partir desta pasta.
+      - ./backups:/backups
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql-data:

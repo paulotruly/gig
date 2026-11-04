@@ -1,6 +1,6 @@
 # 017: provisionamento
 
-**Situação:** `a fazer`
+**Situação:** `em andamento`
 **Depende de:** 010
 **Referências:** [09] §07 e §10.2, `specs/arquitetura.md`, P-12
 
@@ -22,9 +22,12 @@ Permitir subir o back-end no servidor com um só comando.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: escrever Dockerfile, Compose, Nginx e o job de imagens no CI.
+- [ ] T2: validar no CI, o que exige um push.
+- [ ] T3: subir em um servidor Linux, com certificados e conferência de `SIGTERM`.
 
 ## Notas
 
 Decisões de escopo em `specs/decisoes/0003-padroes-para-as-lacunas-do-mvp.md`.
+
+Nada aqui foi executado: o Docker não está instalado na máquina de desenvolvimento. O script de usuários do MySQL e os de backup foram testados fora de container.
