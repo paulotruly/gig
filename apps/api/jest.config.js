@@ -1,8 +1,7 @@
+const base = require('./jest.base');
+
 /** @type {import('jest').Config} */
 module.exports = {
-  testEnvironment: 'node',
-  roots: ['<rootDir>/test'],
-  transform: {
-    '^.+\\.ts$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
-  },
+  ...base,
+  testPathIgnorePatterns: ['/node_modules/', '/test/integration/'],
 };

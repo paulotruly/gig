@@ -1,6 +1,6 @@
 # 012: trilhas e progresso
 
-**Situação:** `a fazer`
+**Situação:** `concluída`
 **Depende de:** 004
 **Referências:** `specs/contrato-api.md`, P-16
 
@@ -17,14 +17,16 @@ Oferecer trilhas de educação e registrar o progresso por negócio.
 
 ## Critérios de aceite
 
-- [ ] C1: Quando envio progresso para negócio alheio, então recebo `404`.
-- [ ] C2: Quando envio um progresso menor que o atual, então o valor maior é mantido.
+- [x] C1: Quando envio progresso para negócio alheio, então recebo `404`.
+- [x] C2: Quando envio um progresso menor que o atual, então o valor maior é mantido.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar os requisitos.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 
 Decisões de escopo em `specs/decisoes/0003-padroes-para-as-lacunas-do-mvp.md`.
+
+As quatro trilhas têm só título e resumo provisórios (P-16).

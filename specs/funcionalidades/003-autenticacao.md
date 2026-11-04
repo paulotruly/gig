@@ -1,6 +1,6 @@
 # 003: cadastro, autenticação e sessão
 
-**Situação:** `a fazer`
+**Situação:** `concluída`
 **Depende de:** 002
 **Referências:** `specs/contrato-api.md`, `specs/arquitetura.md`, decisão 0003
 
@@ -18,17 +18,19 @@ Permitir que a pessoa crie conta, entre, renove e encerre a sessão com seguran�
 
 ## Critérios de aceite
 
-- [ ] C1: Quando me cadastro e entro, então recebo um cookie `httpOnly` e o banco não guarda o token puro.
-- [ ] C2: Quando erro a senha ou uso um e-mail inexistente, então recebo a mesma resposta `401`.
-- [ ] C3: Quando renovo a sessão, então o token anterior deixa de valer.
-- [ ] C4: Quando encerro a sessão, então o token deixa de valer.
-- [ ] C5: Quando excedo o limite de tentativas de login, então recebo `429`.
+- [x] C1: Quando me cadastro e entro, então recebo um cookie `httpOnly` e o banco não guarda o token puro.
+- [x] C2: Quando erro a senha ou uso um e-mail inexistente, então recebo a mesma resposta `401`.
+- [x] C3: Quando renovo a sessão, então o token anterior deixa de valer.
+- [x] C4: Quando encerro a sessão, então o token deixa de valer.
+- [x] C5: Quando excedo o limite de tentativas de login, então recebo `429`.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar os requisitos.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 
 Decisões de escopo em `specs/decisoes/0003-padroes-para-as-lacunas-do-mvp.md`.
+
+Há limite por IP e por usuário. O limite usa memória do processo, o que basta enquanto houver uma só instância da API.

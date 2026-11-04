@@ -1,6 +1,6 @@
 # 006: entrada assistida
 
-**Situação:** `a fazer`
+**Situação:** `concluída`
 **Depende de:** 005
 **Referências:** regras 5, 6 e 17, decisão 0003
 
@@ -18,15 +18,15 @@ Permitir enviar extrato em CSV ou OFX para testar a previsão sem depender do Op
 
 ## Critérios de aceite
 
-- [ ] C1: Sem consentimento ativo, quando envio um extrato, então recebo `403`.
-- [ ] C2: Quando reenvio o mesmo arquivo, então nenhuma transação é duplicada.
-- [ ] C3: Quando envio um arquivo inválido, então recebo `400` e nada é gravado.
-- [ ] C4: Quando um contador autorizado envia um extrato, então ele é importado.
+- [x] C1: Sem consentimento ativo, quando envio um extrato, então recebo `403`.
+- [x] C2: Quando reenvio o mesmo arquivo, então nenhuma transação é duplicada.
+- [x] C3: Quando envio um arquivo inválido, então recebo `400` e nada é gravado.
+- [x] C4: Quando um contador autorizado envia um extrato, então ele é importado.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar os requisitos.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 

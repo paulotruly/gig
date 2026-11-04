@@ -1,6 +1,6 @@
 # 013: canal WhatsApp
 
-**Situação:** `a fazer`
+**Situação:** `concluída`
 **Depende de:** 011
 **Referências:** regras 7 e 11, decisão 0003, P-12
 
@@ -19,15 +19,17 @@ Receber mensagens e enviar alertas pelo WhatsApp, com adaptador simulado até ha
 
 ## Critérios de aceite
 
-- [ ] C1: Quando a assinatura é inválida, então recebo `401`.
-- [ ] C2: Quando a mesma mensagem chega duas vezes, então só há uma resposta.
-- [ ] C3: Quando o remetente não tem consentimento ativo, então nenhum dado financeiro é enviado.
+- [x] C1: Quando a assinatura é inválida, então recebo `401`.
+- [x] C2: Quando a mesma mensagem chega duas vezes, então só há uma resposta.
+- [x] C3: Quando o remetente não tem consentimento ativo, então nenhum dado financeiro é enviado.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar os requisitos.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 
 Decisões de escopo em `specs/decisoes/0003-padroes-para-as-lacunas-do-mvp.md`.
+
+O envio é simulado. Com conta real, basta implementar `WhatsAppSender`. Quem tem mais de um negócio recebe a previsão do primeiro.

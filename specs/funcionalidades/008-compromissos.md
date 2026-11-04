@@ -1,6 +1,6 @@
 # 008: compromissos fixos e recebíveis
 
-**Situação:** `a fazer`
+**Situação:** `concluída`
 **Depende de:** 004
 **Referências:** `specs/motor-de-previsao.md`
 
@@ -16,13 +16,13 @@ Registrar despesas fixas e recebíveis, necessários aos cenários e à retirada
 
 ## Critérios de aceite
 
-- [ ] C1: Quando crio um compromisso com valor zero ou negativo, então recebo `400`.
-- [ ] C2: Quando crio ou removo um compromisso, então a previsão é recalculada na próxima execução do worker.
+- [x] C1: Quando crio um compromisso com valor zero ou negativo, então recebo `400`.
+- [x] C2: Quando crio ou removo um compromisso, então a previsão é recalculada na próxima execução do worker.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar os requisitos.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 

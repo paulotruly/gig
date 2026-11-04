@@ -1,6 +1,6 @@
 # 005: consentimentos e auditoria
 
-**Situação:** `a fazer`
+**Situação:** `concluída`
 **Depende de:** 004
 **Referências:** regras 5, 6 e 9
 
@@ -17,14 +17,14 @@ Registrar cada consentimento com finalidade e permitir a revogação, com histó
 
 ## Critérios de aceite
 
-- [ ] C1: Quando revogo, então o histórico mantém a concessão e a revogação.
-- [ ] C2: Quando o consentimento expira, então ele deixa de valer.
-- [ ] C3: Quando altero um dado sensível, então `audit_log` registra o evento sem dados financeiros.
+- [x] C1: Quando revogo, então o histórico mantém a concessão e a revogação.
+- [x] C2: Quando o consentimento expira, então ele deixa de valer.
+- [x] C3: Quando altero um dado sensível, então `audit_log` registra o evento sem dados financeiros.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar os requisitos.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 
