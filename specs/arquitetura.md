@@ -1,6 +1,6 @@
 # Arquitetura
 
-Fonte: [09] e [decisão 0002](decisoes/0002-stack-do-back-end.md).
+Fonte: [09] e decisões [0002](decisoes/0002-stack-do-back-end.md) e [0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.md).
 
 **Status usados:** `definido`, `proposto`, `a validar` e `em conflito`.
 
@@ -13,14 +13,14 @@ Fonte: [09] e [decisão 0002](decisoes/0002-stack-do-back-end.md).
 | Linguagem | TypeScript | `definido` |
 | Banco de dados | MySQL (InnoDB) | `definido` |
 | Acesso a dados e migrações | Prisma | `definido` |
-| Tarefas em segundo plano | Worker em Node.js com node-cron | `proposto` |
+| Tarefas em segundo plano | Worker em Node.js com node-cron | `definido` |
 | Validação de entrada | zod | `definido` |
 | Testes | Jest e Supertest | `definido` |
 | Testes ponta a ponta | Playwright | `proposto` |
 | Qualidade | ESLint, Prettier e CI | `definido` |
 | Front-end (outra frente de trabalho) | React e Next.js | `definido` |
 | Hospedagem | Servidor local | `definido` |
-| Provisionamento | Linux, Docker Compose e Nginx | `proposto` |
+| Provisionamento | Linux, Docker Compose e Nginx | `definido` |
 
 ## Camadas lógicas
 
@@ -65,11 +65,11 @@ Status: `proposto`.
 | `mysql` | MySQL | Sem porta publicada | Volume dedicado |
 | `backup` | Script agendado | Nenhuma | Arquivos cifrados fora do volume do banco |
 
-O worker é o único serviço que chama as APIs externas de dados. A API atende o front-end e os webhooks do WhatsApp. O Next.js chama a API por HTTP na rede interna.
+O worker é o único serviço que chama as APIs externas de dados e o responsável por criar e enviar alertas. A API atende o front-end e os webhooks do WhatsApp e responde às mensagens recebidas. O Next.js chama a API por HTTP na rede interna.
 
 ## Estrutura do repositório
 
-Status: `definido`. Monorepo com npm workspaces, com `apps/web`, `apps/api`, `apps/worker` e `packages/shared`. O `apps/web` fica neste repositório, mas é de outra frente de trabalho. Cada pasta é criada quando a primeira funcionalidade precisar dela.
+Status: `definido`. Monorepo com npm workspaces, com `apps/web`, `apps/api`, `apps/worker`, `packages/shared` (contratos e regras puras) e `packages/db` (esquema e cliente Prisma). O front-end só importa os contratos de `@gig/shared/contracts`, para as regras continuarem no back-end (regra 11). O `apps/web` fica neste repositório, mas é de outra frente de trabalho. Cada pasta é criada quando a primeira funcionalidade precisar dela.
 
 ## Operação
 
@@ -85,8 +85,8 @@ Status: `proposto`.
 
 Status: `proposto`.
 
-- **Sessão:** cookie `httpOnly`, `Secure` e `SameSite`, com expiração e renovação. [09] §6.3 também admite JWT de curta duração.
-- **Senhas:** hash com argon2 ou bcrypt.
+- **Sessão:** cookie `httpOnly`, `Secure` e `SameSite=Lax`, com expiração e renovação, e sessão guardada no banco.
+- **Senhas:** hash com argon2.
 - **Criptografia:** tokens de acesso com, por exemplo, AES-256-GCM, e disco do servidor cifrado.
 - **Abuso:** limite de requisições por IP e por usuário, CORS restrito ao front-end e cabeçalhos de segurança, como helmet.
 - **Banco:** usuário de privilégio mínimo para a API e usuário somente leitura de `partner_metrics` para o painel do parceiro.
