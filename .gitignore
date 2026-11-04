@@ -14,3 +14,5 @@ coverage/
 
 # PDFs de origem: trazem dados da equipe e o repositório é público
 docs/*.pdf
+backups/
+infra/nginx/certs/

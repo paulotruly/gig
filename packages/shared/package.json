@@ -1,0 +1,22 @@
+{
+  "name": "@gig/shared",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./contracts": {
+      "types": "./dist/contracts/index.d.ts",
+      "default": "./dist/contracts/index.js"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.test.json",
+    "test": "jest",
+    "build": "tsc -p tsconfig.json"
+  }
+}

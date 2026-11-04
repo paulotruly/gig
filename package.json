@@ -5,8 +5,10 @@
     "node": ">=22"
   },
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "packages/shared",
+    "packages/db",
+    "apps/api",
+    "apps/worker"
   ],
   "scripts": {
     "dev": "npm run dev --workspace @gig/api",
@@ -15,7 +17,10 @@
     "format:check": "prettier --check .",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm test --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present"
+    "build": "npm run build --workspaces --if-present",
+    "test:integration": "npm run test:integration --workspaces --if-present",
+    "migrate": "npm run migrate --workspace @gig/db",
+    "dev:worker": "npm run dev --workspace @gig/worker"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

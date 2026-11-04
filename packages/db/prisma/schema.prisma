@@ -1,0 +1,441 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum BusinessType {
+  MEI
+  ME
+  STARTUP
+  SERVICE_PROVIDER
+}
+
+enum MemberRole {
+  OWNER
+  ACCOUNTANT
+}
+
+enum PartnerType {
+  BANK
+  ACCOUNTING
+  ACCELERATOR
+  INCUBATOR
+  PLATFORM
+  COMMUNITY
+  INVESTOR
+}
+
+enum ConsentPurpose {
+  ASSISTED_INGESTION
+  OPEN_FINANCE
+  WHATSAPP_NOTIFICATIONS
+  PARTNER_AGGREGATES
+}
+
+enum ConsentStatus {
+  GRANTED
+  REVOKED
+}
+
+enum Label {
+  PERSONAL
+  BUSINESS
+  TAX
+  SUPPLIER
+  WITHDRAWAL
+}
+
+enum LabelSource {
+  RULE
+  LEARNED
+  USER
+}
+
+enum CommitmentType {
+  FIXED_EXPENSE
+  RECEIVABLE
+}
+
+enum Recurrence {
+  NONE
+  MONTHLY
+}
+
+enum Scenario {
+  CONSERVATIVE
+  LIKELY
+  FAVORABLE
+}
+
+enum RunwayStatus {
+  FINITE
+  NOT_BURNING
+}
+
+enum AlertChannel {
+  APP
+  WHATSAPP
+}
+
+enum AlertStatus {
+  PENDING
+  SENT
+  SKIPPED
+  FAILED
+}
+
+enum UsageEventType {
+  CONSENT_GRANTED
+  FIRST_FORECAST_VIEWED
+  WEEKLY_OPEN
+  TRACK_COMPLETED
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(120)
+  email        String   @unique @db.VarChar(191)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  phone        String?  @unique @db.VarChar(15)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  sessions        Session[]
+  businessMembers BusinessMember[]
+  partnerMembers  PartnerMember[]
+
+  @@map("users")
+}
+
+model Session {
+  id                Int       @id @default(autoincrement())
+  userId            Int       @map("user_id")
+  tokenHash         String    @unique @map("token_hash") @db.Char(64)
+  expiresAt         DateTime  @map("expires_at")
+  absoluteExpiresAt DateTime  @map("absolute_expires_at")
+  revokedAt         DateTime? @map("revoked_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Partner {
+  id        Int         @id @default(autoincrement())
+  name      String      @db.VarChar(120)
+  type      PartnerType
+  joinCode  String      @unique @map("join_code") @db.VarChar(32)
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  members    PartnerMember[]
+  businesses Business[]
+  metrics    PartnerMetric[]
+
+  @@map("partners")
+}
+
+model PartnerMember {
+  id        Int @id @default(autoincrement())
+  partnerId Int @map("partner_id")
+  userId    Int @map("user_id")
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([partnerId, userId])
+  @@index([userId])
+  @@map("partner_members")
+}
+
+model Business {
+  id              Int          @id @default(autoincrement())
+  name            String       @db.VarChar(120)
+  type            BusinessType
+  partnerId       Int?         @map("partner_id")
+  cashBalance     Decimal?     @map("cash_balance") @db.Decimal(14, 2)
+  cashBalanceDate DateTime?    @map("cash_balance_date") @db.Date
+  forecastDirtyAt DateTime?    @map("forecast_dirty_at")
+  createdAt       DateTime     @default(now()) @map("created_at")
+
+  partner             Partner?              @relation(fields: [partnerId], references: [id])
+  members             BusinessMember[]
+  consents            Consent[]
+  accounts            Account[]
+  transactions        Transaction[]
+  classificationRules ClassificationRule[]
+  statementImports    StatementImport[]
+  commitments         Commitment[]
+  forecasts           Forecast[]
+  forecastScenarios   ForecastScenario[]
+  alerts              Alert[]
+  trackProgress       TrackProgress[]
+  usageEvents         UsageEvent[]
+
+  @@index([partnerId])
+  @@index([forecastDirtyAt])
+  @@map("businesses")
+}
+
+model BusinessMember {
+  id         Int        @id @default(autoincrement())
+  businessId Int        @map("business_id")
+  userId     Int        @map("user_id")
+  role       MemberRole
+
+  business Business @relation(fields: [businessId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([businessId, userId])
+  @@index([userId])
+  @@map("business_members")
+}
+
+/// Só de inserção: gatilhos no banco impedem UPDATE e DELETE.
+model Consent {
+  id              Int            @id @default(autoincrement())
+  businessId      Int            @map("business_id")
+  consentRef      String         @map("consent_ref") @db.Char(36)
+  purpose         ConsentPurpose
+  scope           String         @db.VarChar(191)
+  status          ConsentStatus
+  grantedAt       DateTime       @map("granted_at")
+  expiresAt       DateTime?      @map("expires_at")
+  revokedAt       DateTime?      @map("revoked_at")
+  createdByUserId Int            @map("created_by_user_id")
+  createdAt       DateTime       @default(now()) @map("created_at")
+
+  business Business @relation(fields: [businessId], references: [id])
+
+  @@index([businessId, purpose])
+  @@index([consentRef])
+  @@map("consents")
+}
+
+model Account {
+  id                   Int       @id @default(autoincrement())
+  businessId           Int       @map("business_id")
+  institution          String    @db.VarChar(120)
+  type                 String    @db.VarChar(40)
+  externalRef          String    @map("external_ref") @db.VarChar(191)
+  accessTokenEncrypted String?   @map("access_token_encrypted") @db.Text
+  lastSyncedAt         DateTime? @map("last_synced_at")
+  createdAt            DateTime  @default(now()) @map("created_at")
+
+  business     Business      @relation(fields: [businessId], references: [id])
+  transactions Transaction[]
+
+  @@unique([businessId, externalRef])
+  @@map("accounts")
+}
+
+model StatementImport {
+  id           Int      @id @default(autoincrement())
+  businessId   Int      @map("business_id")
+  userId       Int      @map("user_id")
+  format       String   @db.VarChar(8)
+  fileHash     String   @map("file_hash") @db.Char(64)
+  rowsTotal    Int      @map("rows_total")
+  rowsImported Int      @map("rows_imported")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  business     Business      @relation(fields: [businessId], references: [id])
+  transactions Transaction[]
+
+  @@index([businessId])
+  @@map("statement_imports")
+}
+
+model Transaction {
+  id            Int         @id @default(autoincrement())
+  businessId    Int         @map("business_id")
+  accountId     Int?        @map("account_id")
+  importId      Int?        @map("import_id")
+  date          DateTime    @db.Date
+  amount        Decimal     @db.Decimal(14, 2)
+  description   String      @db.VarChar(255)
+  category      String      @db.VarChar(40)
+  label         Label
+  labelSource   LabelSource @map("label_source")
+  userCorrected Boolean     @default(false) @map("user_corrected")
+  dedupKey      String      @map("dedup_key") @db.Char(64)
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  business Business         @relation(fields: [businessId], references: [id])
+  account  Account?         @relation(fields: [accountId], references: [id])
+  import   StatementImport? @relation(fields: [importId], references: [id])
+
+  @@unique([businessId, dedupKey])
+  @@index([businessId, date])
+  @@map("transactions")
+}
+
+model ClassificationRule {
+  id         Int      @id @default(autoincrement())
+  businessId Int      @map("business_id")
+  pattern    String   @db.VarChar(191)
+  label      Label
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  business Business @relation(fields: [businessId], references: [id])
+
+  @@unique([businessId, pattern])
+  @@map("classification_rules")
+}
+
+model Commitment {
+  id          Int            @id @default(autoincrement())
+  businessId  Int            @map("business_id")
+  type        CommitmentType
+  description String         @db.VarChar(191)
+  amount      Decimal        @db.Decimal(14, 2)
+  dueDate     DateTime       @map("due_date") @db.Date
+  recurrence  Recurrence     @default(NONE)
+  createdAt   DateTime       @default(now()) @map("created_at")
+
+  business Business @relation(fields: [businessId], references: [id])
+
+  @@index([businessId])
+  @@map("commitments")
+}
+
+model Forecast {
+  id             Int      @id @default(autoincrement())
+  businessId     Int      @map("business_id")
+  asOf           DateTime @map("as_of") @db.Date
+  horizonWeeks   Int      @map("horizon_weeks")
+  safeWithdrawal Decimal  @map("safe_withdrawal") @db.Decimal(14, 2)
+  explanation    Json
+  rulesVersion   String   @map("rules_version") @db.VarChar(20)
+  inputHash      String   @map("input_hash") @db.Char(64)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  business  Business           @relation(fields: [businessId], references: [id])
+  scenarios ForecastScenario[]
+
+  @@unique([businessId, rulesVersion, inputHash])
+  @@index([businessId, id])
+  @@map("forecasts")
+}
+
+model ForecastScenario {
+  id                Int          @id @default(autoincrement())
+  businessId        Int          @map("business_id")
+  forecastId        Int          @map("forecast_id")
+  scenario          Scenario
+  endBalance        Decimal      @map("end_balance") @db.Decimal(14, 2)
+  firstNegativeDate DateTime?    @map("first_negative_date") @db.Date
+  runwayMonths      Decimal?     @map("runway_months") @db.Decimal(10, 1)
+  runwayStatus      RunwayStatus @map("runway_status")
+  monthlyRevenue    Decimal      @map("monthly_revenue") @db.Decimal(14, 2)
+  monthlyExpense    Decimal      @map("monthly_expense") @db.Decimal(14, 2)
+
+  business Business @relation(fields: [businessId], references: [id])
+  forecast Forecast @relation(fields: [forecastId], references: [id])
+
+  @@unique([forecastId, scenario])
+  @@index([businessId])
+  @@map("forecast_scenarios")
+}
+
+model Alert {
+  id            Int          @id @default(autoincrement())
+  businessId    Int          @map("business_id")
+  ruleId        String       @map("rule_id") @db.VarChar(40)
+  referenceDate DateTime     @map("reference_date") @db.Date
+  message       String       @db.VarChar(500)
+  explanation   String       @db.VarChar(255)
+  data          Json
+  trackSlug     String       @map("track_slug") @db.VarChar(60)
+  rulesVersion  String       @map("rules_version") @db.VarChar(20)
+  channel       AlertChannel
+  status        AlertStatus
+  sentAt        DateTime?    @map("sent_at")
+  createdAt     DateTime     @default(now()) @map("created_at")
+
+  business Business @relation(fields: [businessId], references: [id])
+
+  @@unique([businessId, ruleId, referenceDate])
+  @@index([status, channel])
+  @@map("alerts")
+}
+
+model Track {
+  id      Int    @id @default(autoincrement())
+  slug    String @unique @db.VarChar(60)
+  title   String @db.VarChar(120)
+  summary String @db.VarChar(255)
+
+  progress TrackProgress[]
+
+  @@map("tracks")
+}
+
+model TrackProgress {
+  id          Int       @id @default(autoincrement())
+  businessId  Int       @map("business_id")
+  trackId     Int       @map("track_id")
+  percent     Int
+  completedAt DateTime? @map("completed_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  business Business @relation(fields: [businessId], references: [id])
+  track    Track    @relation(fields: [trackId], references: [id])
+
+  @@unique([businessId, trackId])
+  @@map("track_progress")
+}
+
+model PartnerMetric {
+  id            Int      @id @default(autoincrement())
+  partnerId     Int      @map("partner_id")
+  period        String   @db.Char(7)
+  indicator     String   @db.VarChar(60)
+  value         Decimal  @db.Decimal(14, 2)
+  businessCount Int      @map("business_count")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+
+  @@unique([partnerId, period, indicator])
+  @@map("partner_metrics")
+}
+
+/// Só de inserção: gatilhos no banco impedem UPDATE e DELETE.
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  actorUserId Int?     @map("actor_user_id")
+  businessId  Int?     @map("business_id")
+  action      String   @db.VarChar(60)
+  targetType  String?  @map("target_type") @db.VarChar(40)
+  targetId    String?  @map("target_id") @db.VarChar(64)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([businessId, createdAt])
+  @@map("audit_log")
+}
+
+model UsageEvent {
+  id         Int            @id @default(autoincrement())
+  businessId Int            @map("business_id")
+  event      UsageEventType
+  dedupeKey  String         @map("dedupe_key") @db.VarChar(80)
+  createdAt  DateTime       @default(now()) @map("created_at")
+
+  business Business @relation(fields: [businessId], references: [id])
+
+  @@unique([businessId, dedupeKey])
+  @@map("usage_events")
+}
+
+model WhatsappMessage {
+  id         Int      @id @default(autoincrement())
+  externalId String   @unique @map("external_id") @db.VarChar(191)
+  businessId Int?     @map("business_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("whatsapp_messages")
+}

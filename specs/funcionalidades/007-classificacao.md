@@ -1,6 +1,6 @@
 # 007: classificação PF-PJ e correção pelo usuário
 
-**Situação:** `a fazer`
+**Situação:** `concluída`
 **Depende de:** 006
 **Referências:** `specs/motor-de-previsao.md`, regras 12 e 13
 
@@ -17,14 +17,14 @@ Etiquetar cada transação e aprender com as correções do usuário.
 
 ## Critérios de aceite
 
-- [ ] C1: Quando corrijo uma transação, então transações parecidas passam a usar a nova etiqueta.
-- [ ] C2: Uma transação corrigida à mão nunca é sobrescrita por regra.
-- [ ] C3: Quando tento corrigir a transação de outro negócio, então recebo `404`.
+- [x] C1: Quando corrijo uma transação, então transações parecidas passam a usar a nova etiqueta.
+- [x] C2: Uma transação corrigida à mão nunca é sobrescrita por regra.
+- [x] C3: Quando tento corrigir a transação de outro negócio, então recebo `404`.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar os requisitos.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 

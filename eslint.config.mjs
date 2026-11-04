@@ -7,6 +7,16 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     files: ['**/*.js'],
-    languageOptions: { sourceType: 'commonjs', globals: { module: 'writable' } },
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        module: 'writable',
+        require: 'readonly',
+        process: 'readonly',
+        URL: 'readonly',
+        __dirname: 'readonly',
+      },
+    },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
 );
