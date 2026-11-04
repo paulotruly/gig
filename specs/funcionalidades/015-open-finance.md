@@ -1,6 +1,6 @@
 # 015: Open Finance PJ (interface)
 
-**Situação:** `a fazer`
+**Situação:** `em andamento`
 **Depende de:** 005
 **Referências:** regras 1, 5 e 8, P-08
 
@@ -17,14 +17,15 @@ Preparar a sincronização somente leitura, sem depender ainda de um provedor re
 
 ## Critérios de aceite
 
-- [ ] C1: Quando o consentimento foi revogado, então o provedor não é chamado.
-- [ ] C2: Quando sincronizo duas vezes, então as transações não duplicam.
-- [ ] C3: Um token adulterado não é decifrado.
+- [x] C1: Quando o consentimento foi revogado, então o provedor não é chamado.
+- [x] C2: Quando sincronizo duas vezes, então as transações não duplicam.
+- [x] C3: Um token adulterado não é decifrado.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar a interface, a cifragem e a sincronização.
+- [ ] T3: implementar um provedor real e o endpoint de conexão de conta, que dependem da P-08.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 

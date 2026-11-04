@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "isolatedModules": true,
+    "types": ["jest", "node"],
+    "paths": {
+      "@gig/shared": ["../../packages/shared/src/index.ts"],
+      "@gig/shared/contracts": ["../../packages/shared/src/contracts/index.ts"],
+      "@gig/db": ["../../packages/db/src/index.ts"]
+    }
+  },
+  "include": ["src", "test"]
+}

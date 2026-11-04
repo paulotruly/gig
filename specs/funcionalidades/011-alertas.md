@@ -1,6 +1,6 @@
 # 011: alertas e orientação explicável
 
-**Situação:** `a fazer`
+**Situação:** `concluída`
 **Depende de:** 010
 **Referências:** `specs/motor-de-previsao.md`, regras 13, 15 e 16
 
@@ -18,13 +18,13 @@ Avisar o empreendedor a tempo, mostrando dados, regra e trilha relacionada.
 
 ## Critérios de aceite
 
-- [ ] C1: Quando o saldo conservador fica negativo em até 15 dias, então um alerta é criado com os dados usados.
-- [ ] C2: Quando o worker reexecuta, então o alerta não se repete.
+- [x] C1: Quando o saldo conservador fica negativo em até 15 dias, então um alerta é criado com os dados usados.
+- [x] C2: Quando o worker reexecuta, então o alerta não se repete.
 
 ## Tarefas
 
-- [ ] T1: implementar os requisitos.
-- [ ] T2: cobrir os critérios de aceite com testes.
+- [x] T1: implementar os requisitos.
+- [x] T2: cobrir os critérios de aceite com testes.
 
 ## Notas
 
