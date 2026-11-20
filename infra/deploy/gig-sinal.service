@@ -1,0 +1,11 @@
+[Unit]
+Description=Sinal de vida do GiG para o Healthchecks.io
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# HEALTHCHECKS_SITE_URL fica no .env do GiG, fora do repositório.
+EnvironmentFile=-/opt/gig/.env
+ExecStart=/usr/local/sbin/gig-sinal
+TimeoutStartSec=3min

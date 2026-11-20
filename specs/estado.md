@@ -12,7 +12,7 @@ A [020](funcionalidades/020-login-com-google.md) permite entrar e criar a conta 
 
 ## Funcionalidade em andamento
 
-- [022: monitoramento](funcionalidades/022-monitoramento.md): o GitHub Actions vigia o site e o backup avisa o Healthchecks.io; falta criar o check e gravar o endereço no servidor.
+- [022: monitoramento](funcionalidades/022-monitoramento.md): o servidor manda sinal de vida do site e do backup ao Healthchecks.io; faltam criar os checks e gravar os endereços no servidor.
 - [015: Open Finance](funcionalidades/015-open-finance.md): falta o provedor real, que depende da P-08.
 - [018: integração do front-end](funcionalidades/018-integracao-do-front-end.md): as telas foram conferidas no navegador em 20/11/2026; os problemas encontrados foram corrigidos na 021; faltam os critérios C1, C2, C6 e C7.
 

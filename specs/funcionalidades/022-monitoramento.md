@@ -6,15 +6,16 @@
 
 ## Objetivo
 
-Avisar a equipe por e-mail quando o site sai do ar ou o backup para, sem depender do próprio servidor, que cairia junto com o que vigia.
+Avisar a equipe por e-mail quando o site sai do ar ou o backup para. O aviso vem do Healthchecks.io, de fora do servidor: ele espera sinais periódicos e avisa quando eles atrasam ou chegam como falha, então também detecta o servidor fora do ar.
 
 ## Requisitos
 
-- R1: um workflow agendado do GitHub Actions confere `https://gigreat.online/api/health` e a página inicial a cada 15 minutos, com até 3 tentativas espaçadas. Se falhar, o GitHub manda e-mail para quem configurou o agendamento.
-- R2: o workflow também pode ser disparado à mão.
-- R3: o serviço `backup` avisa o Healthchecks.io a cada backup: sucesso quando o dump e o envio ao R2 (se configurado) dão certo, e falha caso contrário. O endereço fica em `HEALTHCHECKS_URL`, opcional e fora do repositório. Sem ele, nada muda.
-- R4: o check do Healthchecks.io espera um sinal por dia, com 2 horas de tolerância, e manda e-mail quando o sinal atrasa ou chega como falha.
-- R5: a falha ao avisar o Healthchecks.io não derruba o backup.
+- R1: o `gig-sinal.timer` do servidor acessa `https://gigreat.online/api/health` e a página inicial a cada 5 minutos, pelo caminho público (Cloudflare, túnel, Nginx e app), com até 3 tentativas. Se tudo responder, avisa sucesso no endereço `HEALTHCHECKS_SITE_URL`; se algo falhar, avisa falha.
+- R2: o check do site no Healthchecks.io espera um sinal a cada 5 minutos, com 10 minutos de tolerância.
+- R3: o serviço `backup` avisa o Healthchecks.io a cada backup: sucesso quando o dump e o envio ao R2 (se configurado) dão certo, e falha caso contrário. O endereço fica em `HEALTHCHECKS_URL`.
+- R4: o check do backup espera um sinal por dia, com 2 horas de tolerância.
+- R5: os endereços do Healthchecks.io ficam no `.env` do servidor, fora do repositório, e são opcionais: sem eles, nada muda. A falha ao avisar o Healthchecks.io não derruba o backup nem o timer.
+- R6: o `deploy.sh` instala e liga o `gig-sinal.timer` a cada implantação.
 
 ## Fora do escopo
 
@@ -23,22 +24,22 @@ Avisar a equipe por e-mail quando o site sai do ar ou o backup para, sem depende
 
 ## Critérios de aceite
 
-- [ ] C1: quando disparo o workflow à mão com o site no ar, então ele passa.
-- [ ] C2: quando um backup termina, então o check do Healthchecks.io registra o sinal de sucesso.
-- [ ] C3: quando o backup falha, então o Healthchecks.io registra uma falha e manda e-mail.
+- [ ] C1: com o site no ar, o check do site recebe um sinal de sucesso a cada 5 minutos.
+- [ ] C2: quando um backup termina, então o check do backup registra o sinal de sucesso.
+- [ ] C3: quando o site ou o backup falham, então o Healthchecks.io registra uma falha e manda e-mail.
 
 ## Plano técnico
 
-- `.github/workflows/monitor.yml` com `schedule` e `workflow_dispatch`.
+- `infra/deploy/gig-sinal.sh`, `gig-sinal.service` e `gig-sinal.timer`, instalados pelo `deploy.sh`.
 - `infra/backup/agendar.sh` chama `HEALTHCHECKS_URL` ou `HEALTHCHECKS_URL/fail` com `curl`, e o `docker-compose.yml` repassa a variável ao serviço `backup`.
 
 ## Tarefas
 
-- [x] T1: workflow que vigia o site.
+- [x] T1: sinal de vida do site, instalado pelo `deploy.sh`.
 - [x] T2: sinal do backup para o Healthchecks.io.
-- [ ] T3: check criado no Healthchecks.io e endereço no `.env` do servidor.
+- [ ] T3: checks `gig-site` e `gig-backup` criados no Healthchecks.io e endereços no `.env` do servidor.
 - [ ] T4: conferir sucesso e falha no painel do Healthchecks.io.
 
 ## Notas
 
-O GitHub desativa workflows agendados de repositório público depois de 60 dias sem atividade no repositório e manda e-mail antes; basta reativar na aba Actions. O agendamento do GitHub pode atrasar alguns minutos nos horários de pico.
+A primeira versão usava um workflow agendado do GitHub Actions, mas a proteção contra robôs da Cloudflare responde 403 aos servidores do GitHub, e o agendamento do GitHub atrasa e é desativado depois de 60 dias sem atividade. O sinal de vida do servidor passa pela mesma Cloudflare sem bloqueio, e o teste com um endereço quebrado acusou a falha.

@@ -21,3 +21,5 @@ O GiG passa a rodar no servidor `ignam`, que já hospeda outra aplicação. As p
 - As migrações não voltam: a volta automática só é segura quando a versão nova não alterou o banco.
 - O IP do visitante chega ao Nginx em `CF-Connecting-IP`. Pela tailnet, esse cabeçalho pode ser forjado, o que só afeta o limite por IP de quem já está na tailnet.
 - O token da API da Cloudflare (`/etc/gig/cloudflare.env`) e o do conector (`/etc/gig/cloudflared-token`) ficam só no servidor, legíveis apenas pelo root.
+- Em 20/11/2026, a zona passou a usar Security Level Medium e ganhou SPF (`v=spf1 -all`) e DMARC (`p=reject`), porque o domínio não envia e-mail. TLS 1.3 e HTTPS Rewrites já estavam ligados. O HSTS ficou desligado por ser difícil de reverter; os valores anteriores estão em `/etc/gig/cloudflare-antes.txt`.
+- A proteção contra robôs da Cloudflare responde 403 a monitores em datacenters, como o GitHub Actions, por isso o monitoramento do site é um sinal de vida enviado pelo próprio servidor (022).

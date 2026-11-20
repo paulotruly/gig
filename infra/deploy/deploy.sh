@@ -77,6 +77,13 @@ log "Implantando ${target:0:7} (anterior: ${current:0:7})."
 git checkout -q --detach "$target"
 # Atualiza a cópia que o timer executa; esta execução segue com a versão já carregada.
 install -m 0755 infra/deploy/deploy.sh /usr/local/sbin/gig-deploy
+# Sinal de vida do site (022), mantido junto com cada versão.
+if [ -f infra/deploy/gig-sinal.sh ]; then
+  install -m 0755 infra/deploy/gig-sinal.sh /usr/local/sbin/gig-sinal
+  install -m 0644 infra/deploy/gig-sinal.service infra/deploy/gig-sinal.timer /etc/systemd/system/
+  systemctl daemon-reload
+  systemctl enable -q --now gig-sinal.timer || log "Não foi possível ligar o gig-sinal.timer."
+fi
 
 if up; then
   echo "$target" >"$GIG_STATE_DIR/implantado"
