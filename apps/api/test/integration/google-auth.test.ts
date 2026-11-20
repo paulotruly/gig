@@ -61,9 +61,9 @@ it('C1: inicia PKCE, state, nonce e cookie da tentativa', async () => {
   expect(url.searchParams.get('code_challenge')).toBe(
     createHash('sha256').update(attempt.codeVerifier).digest('base64url'),
   );
-  expect(String(response.headers['set-cookie'])).toMatch(/Max-Age=600/);
-  expect(String(response.headers['set-cookie'])).toMatch(
-    /Path=\/api\/auth\/google; HttpOnly; SameSite=Lax/,
+  const attributes = String(response.headers['set-cookie']).split('; ');
+  expect(attributes).toEqual(
+    expect.arrayContaining(['Max-Age=600', 'Path=/api/auth/google', 'HttpOnly', 'SameSite=Lax']),
   );
 });
 
