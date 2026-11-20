@@ -34,11 +34,11 @@ Não trate como definido o que está marcado como `proposto`, `a validar` ou `em
 
 ## Branches
 
-- `tasks`: trabalho do dia a dia. Todo desenvolvimento começa aqui.
+- `task_<NNN>`: uma branch por tarefa, com o número da especificação (por exemplo, `task_021`), criada a partir da `dev`. Todo desenvolvimento começa aqui.
 - `dev`: testes.
-- `main`: versão principal.
+- `main`: versão principal, implantada automaticamente no servidor ([decisão 0004](specs/decisoes/0004-implantacao-puxada-pelo-servidor.md)).
 
-O fluxo é `tasks` → `dev` → `main`. Só promova para `dev` ou `main` quando for pedido.
+O fluxo é `task_<NNN>` → `dev` → `main`, em passos separados: a tarefa entra na `dev` com o CI verde, e a `dev` só vai para a `main` com o CI verde nela. Só promova para `dev` ou `main` quando for pedido. Ao concluir uma entrega, crie uma tag anotada `NNN-nome` no commit final. A antiga branch `tasks` saiu do fluxo.
 
 ## Commits
 
