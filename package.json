@@ -12,6 +12,8 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace @gig/api",
+    "dev:web": "npm run dev --prefix apps/web",
+    "build:web": "npm run build --prefix apps/web",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
