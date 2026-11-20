@@ -22,6 +22,12 @@ describe('loadConfig', () => {
     }
   });
 
+  it('trata os segredos do WhatsApp vazios como ausentes', () => {
+    const config = loadConfig({ DATABASE_URL, WHATSAPP_APP_SECRET: '', WHATSAPP_VERIFY_TOKEN: '' });
+    expect(config.WHATSAPP_APP_SECRET).toBeUndefined();
+    expect(config.WHATSAPP_VERIFY_TOKEN).toBeUndefined();
+  });
+
   it('exige o banco e, em produção, a conexão somente leitura do parceiro', () => {
     expect(() => loadConfig({})).toThrow('DATABASE_URL');
     expect(() => loadConfig({ DATABASE_URL, NODE_ENV: 'production' })).toThrow(

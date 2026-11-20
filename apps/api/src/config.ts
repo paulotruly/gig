@@ -1,5 +1,11 @@
 import { z } from 'zod';
 
+// O Compose repassa variável ausente como texto vazio (`${VAR:-}`); vazio vale como ausente.
+const optionalSecret = z.preprocess(
+  (value) => (value === '' ? undefined : value),
+  z.string().min(1).optional(),
+);
+
 const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -15,8 +21,8 @@ const envSchema = z
     RATE_LIMIT_PER_MINUTE: z.coerce.number().int().positive().default(300),
     RATE_LIMIT_PER_USER_PER_MINUTE: z.coerce.number().int().positive().default(300),
     LOGIN_LIMIT_PER_15_MINUTES: z.coerce.number().int().positive().default(10),
-    WHATSAPP_APP_SECRET: z.string().min(1).optional(),
-    WHATSAPP_VERIFY_TOKEN: z.string().min(1).optional(),
+    WHATSAPP_APP_SECRET: optionalSecret,
+    WHATSAPP_VERIFY_TOKEN: optionalSecret,
   })
   .superRefine((env, context) => {
     if (env.NODE_ENV === 'production' && !env.DATABASE_URL_PARTNER_METRICS) {
