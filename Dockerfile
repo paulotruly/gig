@@ -19,7 +19,7 @@ RUN npm run build
 FROM build AS migrate
 WORKDIR /app/packages/db
 USER node
-CMD ["npx", "prisma", "migrate", "deploy"]
+CMD ["sh", "scripts/migrar.sh"]
 
 FROM build AS pruned
 RUN npm prune --omit=dev

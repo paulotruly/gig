@@ -31,4 +31,6 @@ Permitir subir o back-end no servidor com um só comando.
 
 Decisões de escopo em `specs/decisoes/0003-padroes-para-as-lacunas-do-mvp.md`.
 
+Em 20/11/2026, o backup do servidor falhava desde a criação: o `01-usuarios.sh` parava no `GRANT` em `partner_metrics`, tabela que só existe depois das migrações, e o `gig_backup` não era criado. A permissão passou para `packages/db/scripts/migrar.sh`, que o serviço `migrate` roda depois das migrações. Um backup foi restaurado em banco descartável e conferido contra a produção (tabelas, triggers e contagens).
+
 Nada aqui foi executado: o Docker não está instalado na máquina de desenvolvimento. O script de usuários do MySQL e os de backup foram testados fora de container.

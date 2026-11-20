@@ -20,7 +20,7 @@ A [020](funcionalidades/020-login-com-google.md) permite entrar e criar a conta 
 
 1. Conferir as telas da 018 no navegador com a seed.
 2. Revisar as decisões decorrentes da [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.md).
-3. Definir a cópia dos backups para fora do servidor.
+3. Ligar o envio dos backups para o Cloudflare R2 (código pronto; faltam o bucket e as chaves no servidor).
 
 ## Bloqueios
 

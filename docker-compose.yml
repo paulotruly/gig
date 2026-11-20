@@ -59,6 +59,9 @@ services:
     restart: 'no'
     environment:
       DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD}@mysql:3306/${MYSQL_DATABASE}?allowPublicKeyRetrieval=true
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      GIG_METRICS_USER: ${GIG_METRICS_USER}
+      NPM_CONFIG_UPDATE_NOTIFIER: 'false'
     depends_on:
       mysql:
         condition: service_healthy
@@ -100,9 +103,23 @@ services:
       MYSQL_PWD: ${GIG_BACKUP_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       BACKUP_PASSPHRASE: ${BACKUP_PASSPHRASE}
+      BACKUP_LOCAL_DAYS: ${BACKUP_LOCAL_DAYS:-7}
+      # Opcional: sem R2_BUCKET, o backup fica só no disco do servidor.
+      R2_ENDPOINT: ${R2_ENDPOINT:-}
+      R2_BUCKET: ${R2_BUCKET:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
     volumes:
-      # Fora do volume do banco; a cópia para fora do servidor é feita a partir desta pasta.
+      # Fora do volume do banco; o enviar.sh copia cada backup para fora do servidor.
       - ./backups:/backups
+    # Saudável enquanto houver backup das últimas 26 horas (um por dia, com folga).
+    healthcheck:
+      test:
+        ['CMD-SHELL', "find /backups -maxdepth 1 -name 'gig-*.sql.gz.enc' -mmin -1560 | grep -q ."]
+      interval: 30m
+      timeout: 10s
+      start_period: 10m
+      retries: 1
     depends_on:
       mysql:
         condition: service_healthy
