@@ -8,11 +8,10 @@ Atualize este arquivo no mesmo commit de cada entrega. Mantenha-o curto: o hist�
 
 O back-end do [09] está implementado em `apps/api`, `apps/worker`, `packages/shared` e `packages/db`, com testes contra MySQL real. O WhatsApp usa envio simulado, e o Open Finance só tem a interface. O `apps/web` (vindo da `feat/task-01`) consome a API em todas as telas que ela cobre, e `npm run seed` cria um negócio de demonstração; os testes com Playwright são de outra frente.
 
-A [020](funcionalidades/020-login-com-google.md) permite entrar e criar a conta com o Google, já em produção. A [021](funcionalidades/021-ajustes-do-teste-das-telas.md) corrigiu o que o teste das telas encontrou: endereço por tela, busca de transações, modais pelo teclado e progresso das trilhas.
+A [020](funcionalidades/020-login-com-google.md) permite entrar e criar a conta com o Google, já em produção. A [021](funcionalidades/021-ajustes-do-teste-das-telas.md) corrigiu o que o teste das telas encontrou: endereço por tela, busca de transações, modais pelo teclado e progresso das trilhas. A [022](funcionalidades/022-monitoramento.md) avisa por e-mail, pelo Healthchecks.io, quando o site cai ou o backup para.
 
 ## Funcionalidade em andamento
 
-- [022: monitoramento](funcionalidades/022-monitoramento.md): o servidor manda sinal de vida do site e do backup ao Healthchecks.io; faltam criar os checks e gravar os endereços no servidor.
 - [015: Open Finance](funcionalidades/015-open-finance.md): falta o provedor real, que depende da P-08.
 - [018: integração do front-end](funcionalidades/018-integracao-do-front-end.md): as telas foram conferidas no navegador em 20/11/2026; os problemas encontrados foram corrigidos na 021; faltam os critérios C1, C2, C6 e C7.
 

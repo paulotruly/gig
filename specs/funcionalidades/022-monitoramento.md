@@ -1,6 +1,6 @@
 # 022: monitoramento
 
-**Situação:** `em andamento`
+**Situação:** `concluída`
 **Depende de:** 017
 **Referências:** [decisão 0004](../decisoes/0004-implantacao-puxada-pelo-servidor.md), `specs/arquitetura.md` (observabilidade)
 
@@ -26,7 +26,7 @@ Avisar a equipe por e-mail quando o site sai do ar ou o backup para. O aviso vem
 
 - [x] C1: com o site no ar, o check do site recebe um sinal de sucesso a cada 5 minutos.
 - [x] C2: quando um backup termina, então o check do backup registra o sinal de sucesso.
-- [ ] C3: quando o site ou o backup falham, então o Healthchecks.io registra uma falha e manda e-mail.
+- [x] C3: quando o site ou o backup falham, então o Healthchecks.io registra uma falha e manda e-mail.
 
 ## Plano técnico
 
@@ -38,8 +38,10 @@ Avisar a equipe por e-mail quando o site sai do ar ou o backup para. O aviso vem
 - [x] T1: sinal de vida do site, instalado pelo `deploy.sh`.
 - [x] T2: sinal do backup para o Healthchecks.io.
 - [x] T3: checks `gig-site` e `gig-backup` criados no Healthchecks.io e endereços no `.env` do servidor.
-- [ ] T4: conferir sucesso e falha no painel do Healthchecks.io.
+- [x] T4: conferir sucesso e falha no painel do Healthchecks.io.
 
 ## Notas
 
 A primeira versão usava um workflow agendado do GitHub Actions, mas a proteção contra robôs da Cloudflare responde 403 aos servidores do GitHub, e o agendamento do GitHub atrasa e é desativado depois de 60 dias sem atividade. O sinal de vida do servidor passa pela mesma Cloudflare sem bloqueio, e o teste com um endereço quebrado acusou a falha.
+
+Em 20/11/2026, os dois checks receberam o primeiro sinal de sucesso, e uma queda simulada do site (sinal de falha seguido do sinal normal) gerou os dois e-mails esperados do Healthchecks.io: o de queda e o de volta.
