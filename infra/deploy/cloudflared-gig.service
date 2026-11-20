@@ -1,0 +1,13 @@
+[Unit]
+Description=Cloudflare Tunnel do GiG
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# O token do conector fica em arquivo só do root, fora do repositório e da linha de comando.
+ExecStart=/usr/bin/cloudflared --no-autoupdate tunnel run --token-file /etc/gig/cloudflared-token
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
