@@ -8,6 +8,11 @@ set -u
 
 local_days="${BACKUP_LOCAL_DAYS:-7}"
 
+# Como processo principal do container, o shell ignora SIGTERM por padrão e seria morto à
+# força depois do prazo. Com o trap, ele sai na hora durante a espera; durante um backup,
+# sai assim que o backup em curso termina.
+trap 'echo "Encerrando o agendador de backup."; exit 0' TERM INT
+
 # Avisa o Healthchecks.io. Uso: avisar [/fail] [mensagem]. Uma falha aqui não derruba nada.
 avisar() {
   [ -n "${HEALTHCHECKS_URL:-}" ] || return 0
@@ -16,6 +21,8 @@ avisar() {
 }
 
 while true; do
+  # Restos de um backup interrompido (o arquivo só ganha o nome final quando termina).
+  find /backups -maxdepth 1 -name 'gig-*.parcial*' -delete
   status=0
   if output="$(backup.sh /backups)"; then
     echo "$output"
@@ -35,5 +42,7 @@ while true; do
   fi
   # Mantém só os últimos dias no disco; o histórico longo fica no bucket.
   find /backups -maxdepth 1 -name 'gig-*.sql.gz.enc' -mtime +"$local_days" -delete
-  sleep 86400
+  # Em segundo plano, para o trap valer durante a espera.
+  sleep 86400 &
+  wait $!
 done
