@@ -11,15 +11,14 @@ O back-end do [09] está implementado em `apps/api`, `apps/worker`, `packages/sh
 ## Funcionalidade em andamento
 
 - [015: Open Finance](funcionalidades/015-open-finance.md): falta o provedor real, que depende da P-08.
-- [017: provisionamento](funcionalidades/017-provisionamento.md): falta validar no CI e em um servidor.
+- [017: provisionamento](funcionalidades/017-provisionamento.md): a `main` se implanta sozinha no servidor `ignam`, pela tailnet; falta abrir para a internet com TLS próprio.
 - [018: integração do front-end](funcionalidades/018-integracao-do-front-end.md): a API responde pelo proxy do Next com a seed; falta conferir as telas no navegador.
 
 ## Próximo passo
 
 1. Conferir as telas da 018 no navegador com a seed.
-2. Enviar a branch `tasks` e conferir o CI, inclusive o build das imagens.
-3. Revisar as decisões decorrentes da [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.md).
-4. Subir em um servidor Linux e conferir a 017.
+2. Revisar as decisões decorrentes da [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.md).
+3. Decidir domínio e exposição pública do servidor.
 
 ## Bloqueios
 
@@ -28,6 +27,7 @@ O back-end do [09] está implementado em `apps/api`, `apps/worker`, `packages/sh
 
 ## Últimas decisões
 
+- Implantação puxada pelo servidor, só pela tailnet ([decisão 0004](decisoes/0004-implantacao-puxada-pelo-servidor.md)).
 - Padrões para as lacunas do MVP ([decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.md)).
 - TypeScript, Express, Prisma e monorepo com todo o produto ([decisão 0002](decisoes/0002-stack-do-back-end.md)).
 - Os PDFs ficam fora do git porque o repositório é público e eles trazem dados da equipe.

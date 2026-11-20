@@ -81,3 +81,15 @@ docker compose up -d
 ```
 
 Para restaurar um backup em um banco vazio, use `infra/backup/restore.sh`.
+
+### Servidor atual
+
+No servidor `ignam`, o GiG fica em `/opt/gig` e se atualiza sozinho: o `gig-deploy.timer` confere a `main` a cada 2 minutos e implanta o commit novo quando o CI dele passou ([decisão 0004](specs/decisoes/0004-implantacao-puxada-pelo-servidor.md)). O Nginx publica só em `127.0.0.1:8081`, e o `tailscale serve` entrega o app com TLS na porta 8443 da tailnet.
+
+```sh
+sudo systemctl start gig-deploy        # confere a main agora
+sudo journalctl -u gig-deploy -n 50    # últimas implantações
+sudo gig-deploy --forcar               # reimplanta a main sem esperar o CI
+```
+
+Para preparar outro servidor, clone o repositório em `/opt/gig`, crie o `.env` com as variáveis do Compose e instale `infra/deploy/deploy.sh` como `/usr/local/sbin/gig-deploy`, junto com `gig-deploy.service` e `gig-deploy.timer` em `/etc/systemd/system`.

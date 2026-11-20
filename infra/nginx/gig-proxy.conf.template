@@ -1,0 +1,34 @@
+# Variante para quando o TLS termina antes do Nginx (por exemplo, no `tailscale serve`).
+# A imagem oficial do Nginx troca ${NGINX_LOCAL_RESOLVERS} pelo DNS do container ao subir,
+# o que funciona tanto no Docker quanto no Podman.
+server {
+    listen 80;
+    server_name _;
+
+    # Um pouco acima do limite de 5 MB do extrato, para a API responder o erro padrão.
+    client_max_body_size 6m;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    # Só o proxy com TLS alcança esta porta, que fica presa ao 127.0.0.1.
+    proxy_set_header X-Forwarded-Proto https;
+
+    resolver ${NGINX_LOCAL_RESOLVERS} valid=30s;
+
+    location /api/ {
+        set $api http://api:3000;
+        rewrite ^/api/(.*)$ /$1 break;
+        proxy_pass $api;
+    }
+
+    location /webhooks/ {
+        set $api http://api:3000;
+        proxy_pass $api;
+    }
+
+    location / {
+        set $web http://web:3000;
+        proxy_pass $web;
+    }
+}

@@ -1,0 +1,10 @@
+[Unit]
+Description=Implantação do GiG a partir da main
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/gig-deploy
+# O primeiro build das imagens leva vários minutos.
+TimeoutStartSec=45min

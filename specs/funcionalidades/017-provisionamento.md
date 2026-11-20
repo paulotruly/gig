@@ -25,6 +25,7 @@ Permitir subir o back-end no servidor com um só comando.
 - [x] T1: escrever Dockerfile, Compose, Nginx e o job de imagens no CI.
 - [ ] T2: validar no CI, o que exige um push.
 - [ ] T3: subir em um servidor Linux, com certificados e conferência de `SIGTERM`.
+- [ ] T4: implantar a `main` sozinha no servidor `ignam`, pela tailnet ([decisão 0004](../decisoes/0004-implantacao-puxada-pelo-servidor.md)).
 
 ## Notas
 

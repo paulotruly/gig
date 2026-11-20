@@ -1,0 +1,22 @@
+# Ajustes do servidor compartilhado, aplicados sobre o docker-compose.yml:
+#   docker compose -p gig -f docker-compose.yml -f infra/deploy/compose.servidor.yml up -d
+# - O Nginx publica só em 127.0.0.1 (padrão 8081), porque 80 e 443 já têm dono no servidor
+#   e o TLS fica com o `tailscale serve`.
+# - O "z" reetiqueta os arquivos montados para o SELinux deixar os containers lerem.
+services:
+  nginx:
+    ports: !override
+      - '${GIG_BIND:-127.0.0.1:8081}:80'
+    environment:
+      NGINX_ENTRYPOINT_LOCAL_RESOLVERS: '1'
+    volumes: !override
+      - ./infra/nginx/gig-proxy.conf.template:/etc/nginx/templates/default.conf.template:ro,z
+
+  mysql:
+    volumes: !override
+      - mysql-data:/var/lib/mysql
+      - ./infra/mysql/01-usuarios.sh:/docker-entrypoint-initdb.d/01-usuarios.sh:ro,z
+
+  backup:
+    volumes: !override
+      - ./backups:/backups:z
