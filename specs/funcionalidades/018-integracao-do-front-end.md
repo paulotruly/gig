@@ -1,6 +1,6 @@
 # 018: integração do front-end com a API
 
-**Situação:** `em andamento`
+**Situação:** `concluída`
 **Depende de:** 003, 004, 005, 006, 007, 008, 009, 011, 012
 **Referências:** `specs/contrato-api.md`, `specs/arquitetura.md`, `specs/constituicao.md` (regra 11)
 
@@ -31,13 +31,13 @@ As telas do `apps/web` deixam de usar dados fixos e passam a mostrar os dados do
 
 ## Critérios de aceite
 
-- [ ] C1: Dado que não há sessão, quando abro o app, então vejo a tela de entrada e posso criar conta.
-- [ ] C2: Dado que entrei e não tenho negócio, quando concluo o cadastro do negócio e do saldo, então vejo o painel.
-- [ ] C3: Quando recarrego a página, então continuo na sessão sem token no `localStorage`.
+- [x] C1: Dado que não há sessão, quando abro o app, então vejo a tela de entrada e posso criar conta.
+- [x] C2: Dado que entrei e não tenho negócio, quando concluo o cadastro do negócio e do saldo, então vejo o painel.
+- [x] C3: Quando recarrego a página, então continuo na sessão sem token no `localStorage`.
 - [x] C4: Quando envio um CSV válido, então vejo quantas linhas foram importadas e as transações aparecem classificadas.
 - [x] C5: Quando corrijo o rótulo de uma transação, então a lista reflete a resposta da API.
-- [ ] C6: Quando crio ou excluo um compromisso, então a lista é atualizada.
-- [ ] C7: Sem previsão gerada, o painel e a tela de cenários explicam que falta histórico; com previsão, mostram os três cenários, o runway e a explicação.
+- [x] C6: Quando crio ou excluo um compromisso, então a lista é atualizada.
+- [x] C7: Sem previsão gerada, o painel e a tela de cenários explicam que falta histórico; com previsão, mostram os três cenários, o runway e a explicação.
 - [x] C8: `GET /auth/me` responde o usuário da sessão e `401` sem sessão.
 
 ## Plano técnico
@@ -56,7 +56,7 @@ As telas do `apps/web` deixam de usar dados fixos e passam a mostrar os dados do
 - [x] T5: telas de entrada, cadastro e configuração do negócio.
 - [x] T6: painel, cenários, transações, compromissos, trilhas, alertas e importação ligados à API.
 - [x] T7: serviço `web` no Docker.
-- [ ] T8: conferir ponta a ponta localmente.
+- [x] T8: conferir ponta a ponta localmente.
 
 ## Notas
 
@@ -78,3 +78,7 @@ Problemas encontrados no `apps/web`, corrigidos na [021](021-ajustes-do-teste-da
 - A tela de cenários diz que o GiG recalcula "sempre que entram dados novos", mas o worker recalcula a cada 5 minutos; até lá, a previsão fica desatualizada.
 - A conclusão de trilha some ao recarregar (P-17).
 - A tela do WhatsApp cita "68% dos MEIs" sem fonte e fala do Open Finance como se já funcionasse.
+
+### Conferência final (20/11/2026)
+
+Feita numa cópia descartável do servidor, montada a partir da `main` e sem seed, para seguir o caminho de quem começa do zero. A criação de conta recusou senha curta com mensagem clara e, com senha válida, abriu a sessão e o cadastro do negócio (C1). O negócio foi criado sem marcar o consentimento, o painel explicou que falta histórico para os cenários (C2 e C7), e a importação de extrato pediu a autorização, registrou o consentimento e importou os lançamentos (R6). Um compromisso foi criado e excluído, com confirmação e lista atualizada (C6). Depois de entrar, o navegador guardava só a preferência de ocultar valores, e o cookie da sessão não era visível ao JavaScript (C3).

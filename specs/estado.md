@@ -13,7 +13,6 @@ A [020](funcionalidades/020-login-com-google.md) permite entrar e criar a conta 
 ## Funcionalidade em andamento
 
 - [015: Open Finance](funcionalidades/015-open-finance.md): falta o provedor real, que depende da P-08.
-- [018: integração do front-end](funcionalidades/018-integracao-do-front-end.md): as telas foram conferidas no navegador em 20/11/2026; os problemas encontrados foram corrigidos na 021; faltam os critérios C1, C2, C6 e C7.
 
 ## Próximo passo
 

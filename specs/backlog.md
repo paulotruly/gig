@@ -23,6 +23,8 @@ Ordem baseada em [09] §11, restrita ao back-end e com os itens que faltavam nos
 | 015 | Open Finance PJ (interface; o acesso real depende da P-08) | 005 | P-08 | `em andamento` |
 | 016 | Eventos de uso, backup e restauração | 002 | P-15 | `concluída` |
 | 017 | Provisionamento: Dockerfiles, Compose e Nginx | 010 | P-12 | `concluída` |
+| 018 | Integração do front-end com a API | 003 a 012 | P-17 | `concluída` |
+| 019 | Seed de demonstração | 009, 011, 018 | | `concluída` |
 | 020 | Login com Google | 004 | | `concluída` |
 | 021 | Ajustes do teste das telas | 018 | | `concluída` |
 | 022 | Monitoramento do site e do backup | 017 | | `concluída` |
