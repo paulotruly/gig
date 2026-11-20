@@ -16,3 +16,8 @@ coverage/
 docs/*.pdf
 backups/
 infra/nginx/certs/
+
+# Next.js
+.next/
+next-env.d.ts
+*.tsbuildinfo
