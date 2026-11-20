@@ -18,3 +18,4 @@ Lacunas e conflitos encontrados nos documentos. Ao resolver um item, remova-o da
 |---|---|---|
 | P-11 | Prioridade comercial entre os tipos de parceiro. Todos os tipos citados foram aceitos no sistema, mas [07] diverge de [03], [04] e [09] sobre quem paga | 014 |
 | P-12 | Servidor local só no piloto ou também na operação; canal inicial (WhatsApp, app web ou ambos) | 013 |
+| P-18 | A retirada segura é o menor saldo diário do cenário conservador, sem reserva mínima. Quando as entradas previstas cobrem os vencimentos, ela sugere retirar o caixa inteiro de hoje (na seed, R$ 4.220 de R$ 4.220). Decidir se deve haver uma reserva, por exemplo um percentual do saldo ou um mês de despesas fixas | 009, 018 |

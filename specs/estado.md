@@ -14,11 +14,11 @@ A [020](funcionalidades/020-login-com-google.md) permite entrar e criar a conta 
 
 - [015: Open Finance](funcionalidades/015-open-finance.md): falta o provedor real, que depende da P-08.
 - [017: provisionamento](funcionalidades/017-provisionamento.md): a `main` se implanta sozinha no servidor `ignam` e está em `https://gigreat.online`, pelo Cloudflare Tunnel; falta a conferência de `SIGTERM`.
-- [018: integração do front-end](funcionalidades/018-integracao-do-front-end.md): a API responde pelo proxy do Next com a seed; falta conferir as telas no navegador.
+- [018: integração do front-end](funcionalidades/018-integracao-do-front-end.md): as telas foram conferidas no navegador em 20/11/2026; faltam os problemas de navegação e de modal do `apps/web` listados na spec e os critérios C1, C2, C6 e C7.
 
 ## Próximo passo
 
-1. Conferir as telas da 018 no navegador com a seed.
+1. Corrigir os problemas do `apps/web` encontrados no teste da 018 e decidir a reserva da retirada segura (P-18).
 2. Revisar as decisões decorrentes da [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.md).
 3. Conferir na Cloudflare, depois de alguns dias, que o bucket `gig-backups` recebe um backup por dia.
 

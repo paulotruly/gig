@@ -34,8 +34,8 @@ As telas do `apps/web` deixam de usar dados fixos e passam a mostrar os dados do
 - [ ] C1: Dado que não há sessão, quando abro o app, então vejo a tela de entrada e posso criar conta.
 - [ ] C2: Dado que entrei e não tenho negócio, quando concluo o cadastro do negócio e do saldo, então vejo o painel.
 - [ ] C3: Quando recarrego a página, então continuo na sessão sem token no `localStorage`.
-- [ ] C4: Quando envio um CSV válido, então vejo quantas linhas foram importadas e as transações aparecem classificadas.
-- [ ] C5: Quando corrijo o rótulo de uma transação, então a lista reflete a resposta da API.
+- [x] C4: Quando envio um CSV válido, então vejo quantas linhas foram importadas e as transações aparecem classificadas.
+- [x] C5: Quando corrijo o rótulo de uma transação, então a lista reflete a resposta da API.
 - [ ] C6: Quando crio ou excluo um compromisso, então a lista é atualizada.
 - [ ] C7: Sem previsão gerada, o painel e a tela de cenários explicam que falta histórico; com previsão, mostram os três cenários, o runway e a explicação.
 - [x] C8: `GET /auth/me` responde o usuário da sessão e `401` sem sessão.
@@ -65,3 +65,16 @@ O `apps/web` chegou pela branch `feat/task-01`, com telas sobre dados fixos; os 
 O `apps/web` virou workspace, e o Next roda em modo `standalone` no Docker. O `postcss` usado pelo Next foi fixado em versão corrigida por `overrides` no `package.json` da raiz.
 
 A tela de trilhas mostra só o progresso registrado na sessão, porque `GET /tracks` não devolve o progresso por negócio (P-17). A tela do WhatsApp segue como demonstração.
+
+### Teste de ponta a ponta (20/11/2026)
+
+Feito no navegador, numa cópia descartável do servidor com as imagens de produção e a seed, em desktop e em celular (375 px). Funcionaram: entrada e saída, painel, cenários com explicação, correção de rótulo com aprendizado (as cinco transações parecidas mudaram, e a tela atualizou sem recarregar), importação de CSV com valor `1.234,56` e recusa de duplicadas na reimportação, criação de compromisso, alertas, ocultar valores e o layout de celular. Nenhum erro nos logs da API, do worker, do web e do Nginx. Não foram testados: criação de conta e de negócio (C1 e C2), exclusão de compromisso (C6) e o estado sem previsão (C7).
+
+Problemas encontrados no `apps/web`:
+
+- A navegação não muda a URL: recarregar ou usar o "voltar" do navegador leva sempre ao Início.
+- No celular, a lupa abre as transações em vez de uma busca, e a barra inferior continua destacando o Início.
+- O modal de notificações não fecha com Esc e bloqueia o resto da tela, inclusive o botão Sair.
+- A tela de cenários diz que o GiG recalcula "sempre que entram dados novos", mas o worker recalcula a cada 5 minutos; até lá, a previsão fica desatualizada.
+- A conclusão de trilha some ao recarregar (P-17).
+- A tela do WhatsApp cita "68% dos MEIs" sem fonte e fala do Open Finance como se já funcionasse.
