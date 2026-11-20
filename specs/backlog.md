@@ -24,6 +24,7 @@ Ordem baseada em [09] §11, restrita ao back-end e com os itens que faltavam nos
 | 016 | Eventos de uso, backup e restauração | 002 | P-15 | `concluída` |
 | 017 | Provisionamento: Dockerfiles, Compose e Nginx | 010 | P-12 | `em andamento` |
 | 020 | Login com Google | 004 | | `concluída` |
+| 021 | Ajustes do teste das telas | 018 | | `concluída` |
 
 ## Recomendação de ordem
 

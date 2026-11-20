@@ -1,6 +1,6 @@
 # 021: ajustes do teste das telas
 
-**Situação:** `em andamento`
+**Situação:** `concluída`
 **Depende de:** 018
 **Referências:** [018](018-integracao-do-front-end.md) (teste de ponta a ponta de 20/11/2026), P-17, `specs/contrato-api.md`
 
@@ -27,12 +27,12 @@ Corrigir o que o teste de ponta a ponta da 018 encontrou nas telas: navegação 
 
 ## Critérios de aceite
 
-- [ ] C1: dado que estou em `#cenarios`, quando recarrego, então continuo nos cenários; quando uso o "voltar", então volto à tela anterior.
-- [ ] C2: quando busco `restaurante`, então vejo só as transações com essa palavra na descrição, e o total da lista acompanha o filtro.
-- [ ] C3: no celular, quando toco na lupa, então abro as transações com o campo de busca em foco e a aba Extrato destacada.
-- [ ] C4: com um modal aberto, quando aperto Esc ou clico fora dele, então ele fecha.
-- [ ] C5: quando concluo uma trilha e recarrego a página, então ela continua concluída.
-- [ ] C6: `GET /tracks?businessId=N` de um negócio de outra pessoa responde 403 ou 404, como as demais rotas de negócio.
+- [x] C1: dado que estou em `#cenarios`, quando recarrego, então continuo nos cenários; quando uso o "voltar", então volto à tela anterior.
+- [x] C2: quando busco `restaurante`, então vejo só as transações com essa palavra na descrição, e o total da lista acompanha o filtro.
+- [x] C3: no celular, quando toco na lupa, então abro as transações com o campo de busca em foco e a aba Extrato destacada.
+- [x] C4: com um modal aberto, quando aperto Esc ou clico fora dele, então ele fecha.
+- [x] C5: quando concluo uma trilha e recarrego a página, então ela continua concluída.
+- [x] C6: `GET /tracks?businessId=N` de um negócio de outra pessoa responde 403 ou 404, como as demais rotas de negócio.
 
 ## Plano técnico
 
@@ -48,6 +48,8 @@ Corrigir o que o teste de ponta a ponta da 018 encontrou nas telas: navegação 
 - [x] T4: campo de busca, lupa e destaque da barra inferior.
 - [x] T5: modais com Esc, clique no fundo e atributos de diálogo.
 - [x] T6: trilhas com o progresso salvo e textos de cenários e WhatsApp.
-- [ ] T7: conferir no navegador numa cópia descartável do servidor.
+- [x] T7: conferir no navegador numa cópia descartável do servidor.
 
 ## Notas
+
+A busca usa um sinal numérico para pôr o foco no campo quando a lupa é tocada, e as trilhas de outro negócio seguem o padrão das demais rotas de negócio (404 para quem não participa). Em 20/11/2026, a T7 foi feita numa cópia descartável do servidor, montada a partir da `task_021` com a seed: o login abriu direto em `#cenarios`; recarregar manteve a tela e o "voltar" trocou de tela; a busca por `restaurante` trouxe as 6 transações; os modais fecharam com Esc e com clique fora; a trilha concluída continuou concluída depois de recarregar; no celular, a lupa abriu as transações com o foco na busca e a aba Extrato destacada, e o WhatsApp não destacou nenhuma aba. O C6 é coberto pelos testes de integração, que passaram no CI.

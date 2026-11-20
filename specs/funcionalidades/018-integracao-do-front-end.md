@@ -70,7 +70,7 @@ A tela de trilhas mostra só o progresso registrado na sessão, porque `GET /tra
 
 Feito no navegador, numa cópia descartável do servidor com as imagens de produção e a seed, em desktop e em celular (375 px). Funcionaram: entrada e saída, painel, cenários com explicação, correção de rótulo com aprendizado (as cinco transações parecidas mudaram, e a tela atualizou sem recarregar), importação de CSV com valor `1.234,56` e recusa de duplicadas na reimportação, criação de compromisso, alertas, ocultar valores e o layout de celular. Nenhum erro nos logs da API, do worker, do web e do Nginx. Não foram testados: criação de conta e de negócio (C1 e C2), exclusão de compromisso (C6) e o estado sem previsão (C7).
 
-Problemas encontrados no `apps/web`:
+Problemas encontrados no `apps/web`, corrigidos na [021](021-ajustes-do-teste-das-telas.md), exceto a P-18:
 
 - A navegação não muda a URL: recarregar ou usar o "voltar" do navegador leva sempre ao Início.
 - No celular, a lupa abre as transações em vez de uma busca, e a barra inferior continua destacando o Início.
