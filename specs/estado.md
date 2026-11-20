@@ -10,6 +10,7 @@ O back-end do [09] está implementado em `apps/api`, `apps/worker`, `packages/sh
 
 ## Funcionalidade em andamento
 
+- [020: login com Google](funcionalidades/020-login-com-google.md): T1 a T5 implementadas, com cobertura de integração C1 a C6 para execução no CI; falta T6 (configuração manual do cliente OAuth e dos segredos).
 - [015: Open Finance](funcionalidades/015-open-finance.md): falta o provedor real, que depende da P-08.
 - [017: provisionamento](funcionalidades/017-provisionamento.md): a `main` se implanta sozinha no servidor `ignam` e está em `https://gigreat.online`, pelo Cloudflare Tunnel; falta a conferência de `SIGTERM`.
 - [018: integração do front-end](funcionalidades/018-integracao-do-front-end.md): a API responde pelo proxy do Next com a seed; falta conferir as telas no navegador.

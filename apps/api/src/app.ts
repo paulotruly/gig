@@ -9,6 +9,7 @@ import type { Deps, RouterDeps } from './deps';
 import { errorBody } from './errors';
 import { requireAuth } from './middlewares/auth';
 import { errorHandler, notFound } from './middlewares/errors';
+import { googleAuthRouter } from './modules/google-auth';
 import { authRouter } from './modules/auth';
 import { businessesRouter } from './modules/businesses';
 import { commitmentsRouter } from './modules/commitments';
@@ -121,6 +122,7 @@ export function apiRouters(baseDeps: Deps): Router[] {
   return [
     whatsappRouter(deps),
     authRouter(deps),
+    googleAuthRouter(deps),
     businessesRouter(deps),
     consentsRouter(deps),
     ingestionRouter(deps),

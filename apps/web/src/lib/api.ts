@@ -1,4 +1,5 @@
 import type {
+  AuthProvidersResponse,
   AlertsResponse,
   Business,
   BusinessesResponse,
@@ -100,6 +101,7 @@ async function request<T>(path: string, options: RequestOptions = {}, retry = tr
 }
 
 export const api = {
+  authProviders: () => request<AuthProvidersResponse>('/auth/providers'),
   register: (body: RegisterBody) => request<MeResponse>('/auth/register', { method: 'POST', body }),
   login: (body: LoginBody) => request<MeResponse>('/auth/login', { method: 'POST', body }),
   logout: () => request<void>('/auth/logout', { method: 'POST' }),

@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { Prisma } from '@gig/db';
+import { Prisma, type PrismaClient } from '@gig/db';
 import { loginBody, registerBody } from '@gig/shared/contracts';
 import argon2 from 'argon2';
 import { Router, type CookieOptions, type Request, type Response } from 'express';
@@ -10,7 +10,43 @@ import { audit, parse } from '../http';
 import { hashToken, SESSION_COOKIE } from '../middlewares/auth';
 
 const SESSION_MS = 12 * 60 * 60 * 1000;
-const ABSOLUTE_MS = 30 * 24 * 60 * 60 * 1000;
+export const ABSOLUTE_MS = 30 * 24 * 60 * 60 * 1000;
+
+export async function createSession(
+  prisma: PrismaClient | Prisma.TransactionClient,
+  userId: number,
+  absoluteExpiresAt = new Date(Date.now() + ABSOLUTE_MS),
+) {
+  const token = randomBytes(32).toString('base64url');
+  const expiresAt = new Date(Math.min(Date.now() + SESSION_MS, absoluteExpiresAt.getTime()));
+  await prisma.session.create({
+    data: { userId, tokenHash: hashToken(token), expiresAt, absoluteExpiresAt },
+  });
+  return { token, expiresAt };
+}
+
+export function setSessionCookie(
+  config: RouterDeps['config'],
+  res: Response,
+  session: Awaited<ReturnType<typeof createSession>>,
+) {
+  res.cookie(SESSION_COOKIE, session.token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: config.NODE_ENV === 'production',
+    path: '/',
+    expires: session.expiresAt,
+  });
+}
+
+export async function openSession(
+  { prisma, config }: Pick<RouterDeps, 'prisma' | 'config'>,
+  res: Response,
+  userId: number,
+  absoluteExpiresAt = new Date(Date.now() + ABSOLUTE_MS),
+) {
+  setSessionCookie(config, res, await createSession(prisma, userId, absoluteExpiresAt));
+}
 
 function invalidCredentials(): HttpError {
   return new HttpError(401, 'invalid_credentials', 'E-mail ou senha incorretos.');
@@ -27,15 +63,6 @@ export function authRouter({ prisma, config, authenticate }: RouterDeps): Router
 
   // Calculado uma vez: e-mail inexistente custa o mesmo tempo que senha errada.
   const dummyHash = argon2.hash(randomBytes(32).toString('hex'));
-
-  async function openSession(res: Response, userId: number, absoluteExpiresAt: Date) {
-    const token = randomBytes(32).toString('base64url');
-    const expiresAt = new Date(Math.min(Date.now() + SESSION_MS, absoluteExpiresAt.getTime()));
-    await prisma.session.create({
-      data: { userId, tokenHash: hashToken(token), expiresAt, absoluteExpiresAt },
-    });
-    res.cookie(SESSION_COOKIE, token, { ...cookieOptions, expires: expiresAt });
-  }
 
   const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -74,10 +101,10 @@ export function authRouter({ prisma, config, authenticate }: RouterDeps): Router
     const body = parse(loginBody, req.body);
     const user = await prisma.user.findUnique({ where: { email: body.email.toLowerCase() } });
     const valid = await argon2.verify(user?.passwordHash ?? (await dummyHash), body.password);
-    if (!user || !valid) {
+    if (!user?.passwordHash || !valid) {
       throw invalidCredentials();
     }
-    await openSession(res, user.id, new Date(Date.now() + ABSOLUTE_MS));
+    await openSession({ prisma, config }, res, user.id, new Date(Date.now() + ABSOLUTE_MS));
     await audit(prisma, { actorUserId: user.id, action: 'session.login' });
     res.json({ id: user.id, name: user.name, email: user.email });
   });
@@ -88,7 +115,7 @@ export function authRouter({ prisma, config, authenticate }: RouterDeps): Router
       throw new HttpError(401, 'unauthenticated', 'A sessão expirou. Entre novamente.');
     }
     await prisma.session.update({ where: { id: session.id }, data: { revokedAt: new Date() } });
-    await openSession(res, session.userId, session.absoluteExpiresAt);
+    await openSession({ prisma, config }, res, session.userId, session.absoluteExpiresAt);
     res.status(204).end();
   });
 

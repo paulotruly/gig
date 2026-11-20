@@ -1,8 +1,9 @@
 'use client';
 
 import { loginBody, registerBody } from '@gig/shared/contracts';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormError, PrimaryButton, TextField } from '@/components/ui/states';
+import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { errorMessage } from '@/lib/useResource';
 
@@ -16,6 +17,23 @@ export function AuthScreen() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string>();
   const [sending, setSending] = useState(false);
+
+  const [googleEnabled, setGoogleEnabled] = useState(false);
+  useEffect(() => {
+    let active = true;
+    if (new URLSearchParams(window.location.search).get('erro') === 'google') {
+      setError('Não foi possível entrar com o Google. Tente novamente.');
+    }
+    void api
+      .authProviders()
+      .then((providers) => {
+        if (active) setGoogleEnabled(providers.google);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -57,6 +75,14 @@ export function AuthScreen() {
           <p className="text-xs text-[#64748B]">Gestão financeira e educação para o seu negócio.</p>
         </div>
 
+        {googleEnabled && (
+          <a
+            href="/api/auth/google"
+            className="block rounded-xl border border-[#E6EFE2] p-3 text-center font-bold text-[#111827] hover:bg-[#F8FAF5]"
+          >
+            Entrar com Google
+          </a>
+        )}
         <form onSubmit={submit} className="space-y-3" noValidate>
           {mode === 'register' && (
             <TextField

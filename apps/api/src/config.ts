@@ -21,6 +21,8 @@ const envSchema = z
     RATE_LIMIT_PER_MINUTE: z.coerce.number().int().positive().default(300),
     RATE_LIMIT_PER_USER_PER_MINUTE: z.coerce.number().int().positive().default(300),
     LOGIN_LIMIT_PER_15_MINUTES: z.coerce.number().int().positive().default(10),
+    GOOGLE_CLIENT_ID: optionalSecret,
+    GOOGLE_CLIENT_SECRET: optionalSecret,
     WHATSAPP_APP_SECRET: optionalSecret,
     WHATSAPP_VERIFY_TOKEN: optionalSecret,
   })

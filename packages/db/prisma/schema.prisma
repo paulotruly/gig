@@ -98,7 +98,8 @@ model User {
   id           Int      @id @default(autoincrement())
   name         String   @db.VarChar(120)
   email        String   @unique @db.VarChar(191)
-  passwordHash String   @map("password_hash") @db.VarChar(255)
+  googleSub    String?  @unique @map("google_sub") @db.VarChar(255)
+  passwordHash String?  @map("password_hash") @db.VarChar(255)
   phone        String?  @unique @db.VarChar(15)
   createdAt    DateTime @default(now()) @map("created_at")
 
@@ -161,7 +162,7 @@ model Business {
   forecastDirtyAt DateTime?    @map("forecast_dirty_at")
   createdAt       DateTime     @default(now()) @map("created_at")
 
-  partner             Partner?              @relation(fields: [partnerId], references: [id])
+  partner             Partner?             @relation(fields: [partnerId], references: [id])
   members             BusinessMember[]
   consents            Consent[]
   accounts            Account[]

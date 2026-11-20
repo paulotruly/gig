@@ -7,6 +7,9 @@ Fonte: [09] §06 e [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.
 | Método e rota | Função | Quem acessa |
 |---|---|---|
 | `GET /health` | Verificar se a API está no ar | Infraestrutura |
+| `GET /auth/providers` | Informar os provedores habilitados (`{ "google": boolean }`) | Público |
+| `GET /auth/google` | Iniciar login com Google (302); sem configuração, 404 `google_disabled` | Público |
+| `GET /auth/google/callback` | Validar retorno do Google, vincular ou criar conta e abrir sessão | Público |
 | `POST /auth/register` | Criar usuário | Público |
 | `POST /auth/login` | Abrir sessão | Empreendedor e parceiro |
 | `POST /auth/refresh` | Renovar sessão | Empreendedor e parceiro |
@@ -29,6 +32,10 @@ Fonte: [09] §06 e [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.
 | `GET /partners/:id/metrics` | Indicadores agregados | Parceiro |
 | `GET /webhooks/whatsapp` | Verificar o webhook | WhatsApp Business |
 | `POST /webhooks/whatsapp` | Receber mensagens do canal | WhatsApp Business |
+
+## Login com Google
+
+O início usa PKCE S256, `state` e `nonce`, com cookie `httpOnly`, `SameSite=Lax`, válido por 10 minutos no caminho `/api/auth/google`. O callback apaga esse cookie, valida o token recebido do Google e redireciona para `APP_BASE_URL`; em falha, redireciona para `APP_BASE_URL/?erro=google`, sem abrir sessão. A URL de retorno cadastrada é `APP_BASE_URL/api/auth/google/callback`. Contas sem senha recebem `invalid_credentials` no login por senha. O provedor só é habilitado quando `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` estão preenchidos.
 
 ## Formato de erro
 

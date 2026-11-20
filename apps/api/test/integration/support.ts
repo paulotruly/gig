@@ -2,6 +2,7 @@ import { createPrisma, type PrismaClient } from '@gig/db';
 import { pino } from 'pino';
 import request from 'supertest';
 import { apiRouters, createApp } from '../../src/app';
+import type { GoogleOAuth } from '../../src/deps';
 import { loadConfig } from '../../src/config';
 
 export const databaseUrl = process.env.DATABASE_URL_TEST ?? '';
@@ -10,12 +11,21 @@ export const WHATSAPP_SECRET = 'segredo-de-teste';
 let counter = 0;
 
 export function createTestApp(
-  overrides: { loginLimit?: number; userLimit?: number; partnerDb?: PrismaClient } = {},
+  overrides: {
+    loginLimit?: number;
+    userLimit?: number;
+    partnerDb?: PrismaClient;
+    googleOAuth?: GoogleOAuth;
+    GOOGLE_CLIENT_ID?: string;
+    GOOGLE_CLIENT_SECRET?: string;
+  } = {},
 ) {
   const prisma = createPrisma(databaseUrl);
   const sent: { to: string; text: string }[] = [];
   const config = loadConfig({
     NODE_ENV: 'test',
+    GOOGLE_CLIENT_ID: overrides.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: overrides.GOOGLE_CLIENT_SECRET,
     DATABASE_URL: databaseUrl,
     WHATSAPP_APP_SECRET: WHATSAPP_SECRET,
     WHATSAPP_VERIFY_TOKEN: 'token-de-verificacao',
@@ -27,6 +37,7 @@ export function createTestApp(
     checkDatabase: () => prisma.$queryRaw`SELECT 1`,
     routers: apiRouters({
       prisma,
+      googleOAuth: overrides.googleOAuth,
       partnerMetricsDb: overrides.partnerDb ?? prisma,
       config,
       whatsapp: {

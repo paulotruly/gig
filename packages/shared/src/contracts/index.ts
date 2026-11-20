@@ -34,6 +34,9 @@ export const registerBody = z.strictObject({
     .optional(),
 });
 
+export const authProvidersResponse = z.object({ google: z.boolean() });
+export type AuthProvidersResponse = z.infer<typeof authProvidersResponse>;
+
 export const loginBody = z.strictObject({
   email: z.email().max(191),
   password: z.string().min(1).max(200),
