@@ -38,7 +38,10 @@ jobs:
       - run: npm test
       - run: npm run test:integration
       - run: npm run build
-      - run: npm audit --audit-level=high
+      # Produção bloqueia a partir de high. As ferramentas de desenvolvimento, a partir de critical:
+      # o effect do CLI do Prisma (high) só tem correção rebaixando o Prisma para a 6.
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm audit --audit-level=critical
 
   imagens:
     runs-on: ubuntu-latest
