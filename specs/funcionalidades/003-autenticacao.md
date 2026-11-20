@@ -15,6 +15,7 @@ Permitir que a pessoa crie conta, entre, renove e encerre a sessão com seguran�
 - R3: A renovação troca o token e respeita um limite absoluto de 30 dias.
 - R4: O login responde igual para e-mail inexistente e senha errada.
 - R5: Há limite de requisições por IP e por usuário e CORS restrito ao front-end.
+- R6: `GET /auth/me` devolve `id`, `name` e `email` da sessão, para o front-end (funcionalidade 018).
 
 ## Critérios de aceite
 

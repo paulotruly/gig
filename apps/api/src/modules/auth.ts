@@ -92,6 +92,14 @@ export function authRouter({ prisma, config, authenticate }: RouterDeps): Router
     res.status(204).end();
   });
 
+  router.get('/auth/me', authenticate, async (req: Request, res) => {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: req.userId },
+      select: { id: true, name: true, email: true },
+    });
+    res.json(user);
+  });
+
   router.post('/auth/logout', authenticate, async (req: Request, res) => {
     await prisma.session.update({ where: { id: req.sessionId }, data: { revokedAt: new Date() } });
     res.clearCookie(SESSION_COOKIE, cookieOptions);

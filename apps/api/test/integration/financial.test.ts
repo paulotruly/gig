@@ -1,5 +1,18 @@
 import { fromIsoDate } from '@gig/shared';
-import { forecastResponse } from '@gig/shared/contracts';
+import {
+  alertsResponse,
+  businessesResponse,
+  commitmentResponse,
+  commitmentsResponse,
+  errorResponse,
+  forecastResponse,
+  meResponse,
+  statementUploadResponse,
+  trackProgressResponse,
+  tracksResponse,
+  transactionResponse,
+  transactionsResponse,
+} from '@gig/shared/contracts';
 import request from 'supertest';
 import { createBusiness, createTestApp, grantConsent, registerAndLogin } from './support';
 
@@ -287,5 +300,64 @@ describe('previsão, alertas e trilhas', () => {
     });
     expect(events).toBe(1);
     await agent.post('/tracks/999999/progress').send({ businessId, percent: 1 }).expect(404);
+  });
+});
+
+describe('contratos consumidos pelo front-end', () => {
+  it('as respostas seguem os esquemas de @gig/shared/contracts', async () => {
+    const { agent, base, businessId } = await readyBusiness();
+    const check = (schema: { parse: (v: unknown) => unknown }, body: unknown) =>
+      expect(() => schema.parse(body)).not.toThrow();
+
+    check(meResponse, (await agent.get('/auth/me').expect(200)).body);
+    await agent.put(`${base}/cash-balance`).send({ amount: '10.00', date: '2026-01-01' });
+    check(businessesResponse, (await agent.get('/businesses').expect(200)).body);
+    check(statementUploadResponse, (await upload(agent, base, CSV).expect(201)).body);
+
+    const list = await agent.get(`${base}/transactions`).expect(200);
+    check(transactionsResponse, list.body);
+    const patched = await agent
+      .patch(`/transactions/${list.body.transactions[0].id}`)
+      .send({ label: 'BUSINESS' })
+      .expect(200);
+    check(transactionResponse, patched.body);
+
+    const created = await agent
+      .post(`${base}/commitments`)
+      .send({
+        type: 'FIXED_EXPENSE',
+        description: 'Aluguel',
+        amount: '900.00',
+        dueDate: '2026-12-05',
+      })
+      .expect(201);
+    check(commitmentResponse, created.body);
+    check(commitmentsResponse, (await agent.get(`${base}/commitments`).expect(200)).body);
+
+    await prisma.alert.create({
+      data: {
+        businessId,
+        ruleId: 'das_due',
+        referenceDate: fromIsoDate('2026-11-20'),
+        message: 'O DAS vence em 5 dias.',
+        explanation: 'Vencimento no dia 20.',
+        data: { amount: '75.90' },
+        trackSlug: 'impostos-e-das',
+        rulesVersion: '1.0.0',
+        channel: 'APP',
+        status: 'PENDING',
+      },
+    });
+    check(alertsResponse, (await agent.get(`${base}/alerts`).expect(200)).body);
+
+    const tracks = await agent.get('/tracks').expect(200);
+    check(tracksResponse, tracks.body);
+    const progress = await agent
+      .post(`/tracks/${tracks.body.tracks[0].id}/progress`)
+      .send({ businessId, percent: 30 })
+      .expect(200);
+    check(trackProgressResponse, progress.body);
+
+    check(errorResponse, (await agent.get(`${base}/forecast`).expect(404)).body);
   });
 });

@@ -106,6 +106,13 @@ describe('autenticação', () => {
     await request(app).get('/businesses').set('Cookie', newCookie).expect(401);
   });
 
+  it('informa o usuário da sessão, sem dados sensíveis', async () => {
+    const { agent, email, userId } = await registerAndLogin(app);
+    const res = await agent.get('/auth/me').expect(200);
+    expect(res.body).toEqual({ id: userId, name: 'Pessoa de Teste', email });
+    await request(app).get('/auth/me').expect(401);
+  });
+
   it('sessão vencida e token aleatório não entram', async () => {
     const { email, password, userId } = await registerAndLogin(app);
     const login = await request(app).post('/auth/login').send({ email, password });
@@ -206,6 +213,24 @@ describe('isolamento entre negócios', () => {
       .post('/consents')
       .send({ businessId, purpose: 'OPEN_FINANCE', scope: 'x' })
       .expect(404);
+
+    await owner.agent
+      .put(`${base}/cash-balance`)
+      .send({ amount: '900.00', date: '2026-01-01' })
+      .expect(204);
+    const ownerList = await owner.agent.get('/businesses').expect(200);
+    expect(ownerList.body.businesses).toContainEqual(
+      expect.objectContaining({
+        id: businessId,
+        role: 'OWNER',
+        cashBalance: '900.00',
+        cashBalanceDate: '2026-01-01',
+      }),
+    );
+    const accountantList = await accountant.agent.get('/businesses').expect(200);
+    expect(accountantList.body.businesses).toContainEqual(
+      expect.objectContaining({ id: businessId, role: 'ACCOUNTANT', cashBalance: null }),
+    );
 
     await owner.agent.delete(`${base}/members/${accountant.userId}`).expect(204);
     await upload().expect(404);

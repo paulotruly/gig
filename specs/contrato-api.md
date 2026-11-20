@@ -11,7 +11,8 @@ Fonte: [09] §06 e [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.
 | `POST /auth/login` | Abrir sessão | Empreendedor e parceiro |
 | `POST /auth/refresh` | Renovar sessão | Empreendedor e parceiro |
 | `POST /auth/logout` | Encerrar sessão | Empreendedor e parceiro |
-| `POST /businesses`, `GET /businesses` | Criar e listar negócios | Empreendedor |
+| `GET /auth/me` | Ver o usuário da sessão | Empreendedor e parceiro |
+| `POST /businesses`, `GET /businesses` | Criar e listar negócios (a lista traz o saldo informado) | Empreendedor |
 | `PUT /businesses/:id/cash-balance` | Informar o saldo atual | Dono |
 | `POST /businesses/:id/members`, `DELETE /businesses/:id/members/:userId` | Autorizar e remover contador | Dono |
 | `GET /businesses/:id/consents` | Listar consentimentos | Dono |
@@ -76,6 +77,7 @@ Quando a queima é zero ou negativa, `runway.months` vem nulo e `runway.status` 
 
 ## Regras gerais
 
+- O front-end chama a API na mesma origem, pelo caminho `/api`, que o Nginx (ou o Next, em desenvolvimento) encaminha sem o prefixo. Dessa forma, o cookie de sessão não depende de CORS.
 - Toda entrada é validada na borda, e os esquemas podem ser compartilhados com o front-end.
 - Respostas de previsão e webhooks têm testes de contrato.
 - Toda rota com `:id` de negócio confere se o negócio pertence à sessão.

@@ -41,10 +41,29 @@ export function businessesRouter({ prisma, authenticate }: RouterDeps): Router {
   router.get('/businesses', async (req, res) => {
     const members = await prisma.businessMember.findMany({
       where: { userId: currentUserId(req) },
-      select: { role: true, business: { select: { id: true, name: true, type: true } } },
+      select: {
+        role: true,
+        business: {
+          select: { id: true, name: true, type: true, cashBalance: true, cashBalanceDate: true },
+        },
+      },
       orderBy: { businessId: 'asc' },
     });
-    res.json({ businesses: members.map((m) => ({ ...m.business, role: m.role })) });
+    res.json({
+      businesses: members.map(({ role, business }) => {
+        // O contador só envia extrato: o saldo fica restrito ao dono.
+        const owner = role === 'OWNER';
+        return {
+          id: business.id,
+          name: business.name,
+          type: business.type,
+          role,
+          cashBalance: owner ? (business.cashBalance?.toFixed(2) ?? null) : null,
+          cashBalanceDate:
+            owner && business.cashBalanceDate ? toIsoDate(business.cashBalanceDate) : null,
+        };
+      }),
+    });
   });
 
   router.put('/businesses/:id/cash-balance', async (req, res) => {
