@@ -24,8 +24,8 @@ Avisar a equipe por e-mail quando o site sai do ar ou o backup para. O aviso vem
 
 ## Critérios de aceite
 
-- [ ] C1: com o site no ar, o check do site recebe um sinal de sucesso a cada 5 minutos.
-- [ ] C2: quando um backup termina, então o check do backup registra o sinal de sucesso.
+- [x] C1: com o site no ar, o check do site recebe um sinal de sucesso a cada 5 minutos.
+- [x] C2: quando um backup termina, então o check do backup registra o sinal de sucesso.
 - [ ] C3: quando o site ou o backup falham, então o Healthchecks.io registra uma falha e manda e-mail.
 
 ## Plano técnico
@@ -37,7 +37,7 @@ Avisar a equipe por e-mail quando o site sai do ar ou o backup para. O aviso vem
 
 - [x] T1: sinal de vida do site, instalado pelo `deploy.sh`.
 - [x] T2: sinal do backup para o Healthchecks.io.
-- [ ] T3: checks `gig-site` e `gig-backup` criados no Healthchecks.io e endereços no `.env` do servidor.
+- [x] T3: checks `gig-site` e `gig-backup` criados no Healthchecks.io e endereços no `.env` do servidor.
 - [ ] T4: conferir sucesso e falha no painel do Healthchecks.io.
 
 ## Notas

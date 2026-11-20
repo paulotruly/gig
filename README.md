@@ -87,9 +87,10 @@ O serviço `backup` gera um dump cifrado por dia em `backups/`, mantém 7 dias n
 No servidor `ignam`, o GiG fica em `/opt/gig` e se atualiza sozinho: o `gig-deploy.timer` confere a `main` a cada 2 minutos e implanta o commit novo quando o CI dele passou ([decisão 0004](specs/decisoes/0004-implantacao-puxada-pelo-servidor.md)). O Nginx publica só em `127.0.0.1:8081`. O público acessa `https://gigreat.online` pelo Cloudflare Tunnel (`cloudflared-gig.service`), e a equipe também pode usar a porta 8443 da tailnet, pelo `tailscale serve`.
 
 ```sh
-sudo systemctl start gig-deploy        # confere a main agora
-sudo journalctl -u gig-deploy -n 50    # últimas implantações
-sudo gig-deploy --forcar               # reimplanta a main sem esperar o CI
+sudo systemctl start gig-deploy             # confere a main agora
+sudo journalctl -u gig-deploy -n 50        # últimas implantações
+sudo /usr/local/sbin/gig-deploy --forcar  # reimplanta a main sem esperar o CI
+sudo journalctl -u gig-sinal -n 20         # últimos sinais de vida do site
 ```
 
 Para preparar outro servidor, clone o repositório em `/opt/gig`, crie o `.env` com as variáveis do Compose e instale `infra/deploy/deploy.sh` como `/usr/local/sbin/gig-deploy`, junto com `gig-deploy.service` e `gig-deploy.timer` em `/etc/systemd/system`. Para o domínio, crie um túnel na Cloudflare apontando para `http://127.0.0.1:8081`, grave o token do conector em `/etc/gig/cloudflared-token` (modo 600) e instale `infra/deploy/cloudflared-gig.service`.
