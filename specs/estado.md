@@ -12,6 +12,7 @@ A [020](funcionalidades/020-login-com-google.md) permite entrar e criar a conta 
 
 ## Funcionalidade em andamento
 
+- [022: monitoramento](funcionalidades/022-monitoramento.md): o GitHub Actions vigia o site e o backup avisa o Healthchecks.io; falta criar o check e gravar o endereço no servidor.
 
 - [015: Open Finance](funcionalidades/015-open-finance.md): falta o provedor real, que depende da P-08.
 - [017: provisionamento](funcionalidades/017-provisionamento.md): a `main` se implanta sozinha no servidor `ignam` e está em `https://gigreat.online`, pelo Cloudflare Tunnel; falta a conferência de `SIGTERM`.

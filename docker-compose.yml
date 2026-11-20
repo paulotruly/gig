@@ -111,6 +111,8 @@ services:
       R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
       # Teto de espaço no bucket; o padrão de 5 GB fica na metade da cota gratuita do R2.
       R2_MAX_BYTES: ${R2_MAX_BYTES:-5368709120}
+      # Opcional: endereço de ping do Healthchecks.io, que avisa por e-mail se o backup parar.
+      HEALTHCHECKS_URL: ${HEALTHCHECKS_URL:-}
     volumes:
       # Fora do volume do banco; o enviar.sh copia cada backup para fora do servidor.
       - ./backups:/backups
