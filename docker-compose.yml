@@ -109,6 +109,8 @@ services:
       R2_BUCKET: ${R2_BUCKET:-}
       R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
       R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      # Teto de espaço no bucket; o padrão de 5 GB fica na metade da cota gratuita do R2.
+      R2_MAX_BYTES: ${R2_MAX_BYTES:-5368709120}
     volumes:
       # Fora do volume do banco; o enviar.sh copia cada backup para fora do servidor.
       - ./backups:/backups

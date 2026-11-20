@@ -80,7 +80,7 @@ O `docker-compose.yml` sobe Nginx, front-end, API, worker, MySQL e backup. Defin
 docker compose up -d
 ```
 
-O serviço `backup` gera um dump cifrado por dia em `backups/`, mantém 7 dias no disco (`BACKUP_LOCAL_DAYS`) e fica `unhealthy` se o último backup tiver mais de 26 horas. Com `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID` e `R2_SECRET_ACCESS_KEY` no `.env`, cada backup também vai para um bucket do Cloudflare R2, cuja regra de ciclo de vida define a retenção. Para restaurar em um banco vazio, use `infra/backup/restore.sh`. Guarde o `BACKUP_PASSPHRASE` e o `TOKEN_ENCRYPTION_KEY` fora do servidor: sem eles, o backup não serve.
+O serviço `backup` gera um dump cifrado por dia em `backups/`, mantém 7 dias no disco (`BACKUP_LOCAL_DAYS`) e fica `unhealthy` se o último backup tiver mais de 26 horas. Com `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID` e `R2_SECRET_ACCESS_KEY` no `.env`, cada backup também vai para um bucket do Cloudflare R2, cuja regra de ciclo de vida define a retenção. O envio nunca deixa o bucket passar de `R2_MAX_BYTES` (padrão 5 GB, metade da cota gratuita): apaga os backups mais antigos até o novo caber e, se nem assim couber, não envia. Para restaurar em um banco vazio, use `infra/backup/restore.sh`. Guarde o `BACKUP_PASSPHRASE` e o `TOKEN_ENCRYPTION_KEY` fora do servidor: sem eles, o backup não serve.
 
 ### Servidor atual
 
