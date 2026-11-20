@@ -51,13 +51,17 @@ As telas do `apps/web` deixam de usar dados fixos e passam a mostrar os dados do
 
 - [x] T1: `GET /auth/me` e saldo em `GET /businesses`, com testes de integração.
 - [x] T2: esquemas de resposta em `@gig/shared/contracts`, com testes.
-- [ ] T3: `apps/web` como workspace, `rewrites`, cabeçalhos de segurança e `.env.example`.
-- [ ] T4: cliente da API, sessão e negócio atual.
-- [ ] T5: telas de entrada, cadastro e configuração do negócio.
-- [ ] T6: painel, cenários, transações, compromissos, trilhas, alertas e importação ligados à API.
-- [ ] T7: serviço `web` no Docker.
+- [x] T3: `apps/web` como workspace, `rewrites`, cabeçalhos de segurança e `.env.example`.
+- [x] T4: cliente da API, sessão e negócio atual.
+- [x] T5: telas de entrada, cadastro e configuração do negócio.
+- [x] T6: painel, cenários, transações, compromissos, trilhas, alertas e importação ligados à API.
+- [x] T7: serviço `web` no Docker.
 - [ ] T8: conferir ponta a ponta localmente.
 
 ## Notas
 
 O `apps/web` chegou pela branch `feat/task-01`, com telas sobre dados fixos; os artefatos de build que vieram nela saíram do versionamento.
+
+O `apps/web` virou workspace, e o Next roda em modo `standalone` no Docker. O `postcss` usado pelo Next foi fixado em versão corrigida por `overrides` no `package.json` da raiz.
+
+A tela de trilhas mostra só o progresso registrado na sessão, porque `GET /tracks` não devolve o progresso por negócio (P-17). A tela do WhatsApp segue como demonstração.

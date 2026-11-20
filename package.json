@@ -8,12 +8,13 @@
     "packages/shared",
     "packages/db",
     "apps/api",
-    "apps/worker"
+    "apps/worker",
+    "apps/web"
   ],
   "scripts": {
     "dev": "npm run dev --workspace @gig/api",
-    "dev:web": "npm run dev --prefix apps/web",
-    "build:web": "npm run build --prefix apps/web",
+    "dev:web": "npm run dev --workspace @gig/web",
+    "build:web": "npm run build --workspace @gig/web",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -23,6 +24,11 @@
     "test:integration": "npm run test:integration --workspaces --if-present",
     "migrate": "npm run migrate --workspace @gig/db",
     "dev:worker": "npm run dev --workspace @gig/worker"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "^8.5.33"
+    }
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

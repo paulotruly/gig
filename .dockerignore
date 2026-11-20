@@ -8,5 +8,6 @@ specs
 **/node_modules
 **/dist
 **/coverage
+**/.next
 infra/nginx/certs
 backups

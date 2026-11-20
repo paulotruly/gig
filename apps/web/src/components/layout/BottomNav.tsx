@@ -11,7 +11,7 @@ interface BottomNavProps {
   dasAlertCount?: number;
 }
 
-export function BottomNav({ currentTab, onSelectTab, dasAlertCount = 1 }: BottomNavProps) {
+export function BottomNav({ currentTab, onSelectTab, dasAlertCount = 0 }: BottomNavProps) {
   const tabs = [
     {
       id: 'home' as MobileTab,
@@ -30,7 +30,7 @@ export function BottomNav({ currentTab, onSelectTab, dasAlertCount = 1 }: Bottom
     },
     {
       id: 'commitments' as MobileTab,
-      label: 'DAS & Metas',
+      label: 'Compromissos',
       hasBadge: dasAlertCount > 0,
       icon: Receipt,
     },

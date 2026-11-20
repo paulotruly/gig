@@ -1,28 +1,35 @@
-# GiG (Greed is Great) - Front-end Web
+# GiG (Greed is Great): front-end web
 
-Front-end da plataforma de gestão financeira e educação empreendedora para MEIs, startups e pequenos negócios.
+Front-end da plataforma de gestão financeira e educação empreendedora para MEIs, startups e pequenos negócios. A especificação da integração está em `specs/funcionalidades/018-integracao-do-front-end.md`.
 
-## Identidade Visual & Cores (Design System)
+## Como rodar
 
-Baseado no padrão de cores da GiG:
-
-- **Lime Neon Principal:** `#D7FD3C` (Destaques, botões de ação primária, anéis de progresso)
-- **Lime Hover:** `#C5F82A`
-- **Lime Suave / Fundo de Destaque:** `#F3FCE2`
-- **Dark Obsidian (Contraste):** `#111827` (Textos principais, cards escuros de alta ênfase como Metas)
-- **Fundo da Aplicação:** `#F8FAF5`
-- **Superfície dos Cartões:** `#FFFFFF` com bordas sutis `#E6EFE2` e cantos arredondados (`rounded-3xl` / 24px)
-- **Texto Secundário / Apoio:** `#64748B`
-
-## Telas Implementadas
-
-1. **Início (Dashboard):** Visão geral idêntica ao mockup, com Saldo atual (`R$ 4.220,00`), Receitas (`R$ 8.230,00`), Despesas (`R$ 4.010,00`), card flutuante do DAS MEI, card dark obsidian com donut circular 70% de metas, fluxo de caixa e cálculo de Retirada Segura.
-2. **Cenários & Runway:** Os 3 cenários do motor de previsão da GiG (Conservador, Provável e Favorável) com runway em meses e explicação transparente do cálculo.
-3. **Transações (PF/PJ):** Classificação inteligente com separação entre vida pessoal e empresa, alerta de contas misturadas e modal de extrato OFX/CSV.
-4. **Metas & Compromissos:** Gestão de despesas fixas (DAS, aluguel, contador) e recebíveis agendados.
-5. **Trilhas Educativas:** As 4 trilhas práticas de 3 minutos integradas aos dados da empresa (Fluxo de caixa, Separar contas, Impostos e DAS, Runway para startups).
-6. **WhatsApp Copilot:** Simulador do canal de atendimento proativo da GiG.
+1. Suba a API (`npm run dev` na raiz), que atende na porta 3000.
+2. Copie `.env.example` para `.env.local` se a API estiver em outro endereço.
+3. Rode `npm run dev:web` na raiz e abra `http://localhost:3001`.
 
 ## Integração com a API
 
-Os tipos e esquemas de validação são importados de `@gig/shared/contracts` conforme especificado em `specs/arquitetura.md` (regra 11).
+- O navegador chama `/api/...` na mesma origem. Em desenvolvimento, o Next encaminha para `API_INTERNAL_URL`; em produção, o Nginx faz o mesmo.
+- A sessão fica no cookie `gig_session`, `httpOnly`: o JavaScript não lê nem guarda token. O `localStorage` guarda só preferências visuais (negócio escolhido e valores ocultos).
+- Tipos e esquemas vêm de `@gig/shared/contracts`. O front não calcula valores oficiais: saldo projetado, runway, retirada segura e classificação vêm da API (regra 11 da constituição).
+- Nunca use o prefixo `NEXT_PUBLIC_` para segredos: tudo com ele vai em texto puro para o navegador.
+
+## Identidade visual
+
+- **Lime principal:** `#D7FD3C` (destaques e botões de ação primária)
+- **Lime suave:** `#F3FCE2`
+- **Obsidian:** `#111827` (textos principais e cards de alta ênfase)
+- **Fundo da aplicação:** `#F8FAF5`
+- **Cartões:** `#FFFFFF`, bordas `#E6EFE2` e cantos `rounded-3xl`
+- **Texto secundário:** `#64748B`
+
+## Telas
+
+1. **Entrada e cadastro:** conta, negócio, saldo atual e consentimento para ler extratos.
+2. **Início:** saldo informado, retirada segura, fôlego, cenários, lançamentos recentes, próximo vencimento e alertas.
+3. **Cenários:** os três cenários do motor de previsão, com runway e a explicação do cálculo.
+4. **Transações:** lista paginada com correção da classificação PF e PJ.
+5. **Compromissos:** despesas fixas e recebíveis.
+6. **Trilhas:** as trilhas educativas e o registro de conclusão.
+7. **WhatsApp:** demonstração do canal, com dados de exemplo.

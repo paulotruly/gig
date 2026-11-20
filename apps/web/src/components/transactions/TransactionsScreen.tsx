@@ -1,228 +1,218 @@
 'use client';
 
+import { LABEL_VALUES, type LabelValue, type Transaction } from '@gig/shared/contracts';
 import React, { useState } from 'react';
-import { AlertTriangle, Plus, Tag, Receipt, Building2, Zap } from '@/components/ui/icons';
+import { AlertTriangle, Building2, Plus, Receipt, Tag, Zap } from '@/components/ui/icons';
+import { EmptyCard, ErrorCard, FormError, LoadingCard } from '@/components/ui/states';
+import { api } from '@/lib/api';
+import {
+  formatDate,
+  formatSignedMoney,
+  isNegative,
+  LABEL_NAMES,
+  LABEL_SOURCE_NAMES,
+} from '@/lib/format';
+import { useBusinessData } from '@/lib/session';
+import { errorMessage, useResource } from '@/lib/useResource';
 
-interface TransactionItem {
-  id: number;
-  date: string;
-  description: string;
-  category: string;
-  source: string;
-  label: 'PERSONAL' | 'BUSINESS' | 'TAX' | 'SUPPLIER' | 'WITHDRAWAL';
-  amount: string;
+const PAGE_SIZE = 50;
+
+type Filter = 'ALL' | 'PJ' | 'PF' | 'TAX';
+
+const FILTERS: { id: Filter; name: string; active: string }[] = [
+  { id: 'ALL', name: 'Todas', active: 'bg-[#111827] text-white' },
+  { id: 'PJ', name: 'Empresa (PJ)', active: 'bg-[#10B981] text-white' },
+  { id: 'PF', name: 'Pessoal (PF)', active: 'bg-[#D97706] text-white' },
+  { id: 'TAX', name: 'Tributos', active: 'bg-[#EF4444] text-white' },
+];
+
+// A origem PF/PJ vem da API; o filtro só escolhe o que mostrar nesta página.
+function matches(filter: Filter, t: Transaction): boolean {
+  if (filter === 'PJ') return t.origin === 'BUSINESS' && t.label !== 'TAX';
+  if (filter === 'PF') return t.origin === 'PERSONAL';
+  if (filter === 'TAX') return t.label === 'TAX';
+  return true;
 }
 
-export function TransactionsScreen() {
-  const [filter, setFilter] = useState<'ALL' | 'PJ' | 'PF' | 'TAX'>('ALL');
-  const [transactions, setTransactions] = useState<TransactionItem[]>([
-    {
-      id: 1,
-      date: 'Hoje, 14:20',
-      description: 'Pix - Cliente Acme Tech',
-      category: 'Serviços Prestados',
-      source: 'REGRA',
-      label: 'BUSINESS',
-      amount: '+ R$ 3.500,00',
-    },
-    {
-      id: 2,
-      date: 'Ontem, 19:15',
-      description: 'Farmácia São Paulo',
-      category: 'Saúde & Cuidados',
-      source: 'APRENDIDO',
-      label: 'PERSONAL',
-      amount: '- R$ 86,40',
-    },
-    {
-      id: 3,
-      date: '15/Nov',
-      description: 'DAS MEI Simples Nacional',
-      category: 'Impostos Federais',
-      source: 'REGRA',
-      label: 'TAX',
-      amount: '- R$ 75,90',
-    },
-    {
-      id: 4,
-      date: '14/Nov',
-      description: 'Kalunga Papelaria',
-      category: 'Materiais de Escritório',
-      source: 'USUÁRIO',
-      label: 'SUPPLIER',
-      amount: '- R$ 340,00',
-    },
-    {
-      id: 5,
-      date: '10/Nov',
-      description: 'Retirada Pró-labore Ester',
-      category: 'Pró-labore',
-      source: 'GIG MOTOR',
-      label: 'WITHDRAWAL',
-      amount: '- R$ 1.850,00',
-    },
-    {
-      id: 6,
-      date: '08/Nov',
-      description: 'Pix - Projeto Identidade Visual',
-      category: 'Design & Branding',
-      source: 'REGRA',
-      label: 'BUSINESS',
-      amount: '+ R$ 2.400,00',
-    },
-  ]);
+const LABEL_STYLES: Record<LabelValue, string> = {
+  BUSINESS: 'bg-[#ECFDF5] text-[#10B981]',
+  PERSONAL: 'bg-[#FEF3C7] text-[#92400E]',
+  TAX: 'bg-[#FEF2F2] text-[#EF4444]',
+  WITHDRAWAL: 'bg-[#D7FD3C] text-black',
+  SUPPLIER: 'bg-[#EFF6FF] text-[#1E40AF]',
+};
 
-  const toggleLabel = (id: number) => {
-    setTransactions((prev) =>
-      prev.map((t) => {
-        if (t.id === id) {
-          const nextLabel = t.label === 'PERSONAL' ? 'BUSINESS' : 'PERSONAL';
-          return { ...t, label: nextLabel, source: 'USUÁRIO' };
-        }
-        return t;
-      }),
-    );
-  };
+function LabelIcon({ label }: { label: LabelValue }) {
+  if (label === 'PERSONAL') return <Tag size={18} />;
+  if (label === 'TAX') return <Receipt size={18} />;
+  if (label === 'WITHDRAWAL') return <Zap size={18} />;
+  return <Building2 size={18} />;
+}
 
-  const filtered = transactions.filter((t) => {
-    if (filter === 'PJ') return t.label === 'BUSINESS' || t.label === 'SUPPLIER';
-    if (filter === 'PF') return t.label === 'PERSONAL' || t.label === 'WITHDRAWAL';
-    if (filter === 'TAX') return t.label === 'TAX';
-    return true;
-  });
+export function TransactionsScreen({
+  isBalanceHidden,
+  onOpenImportModal,
+}: {
+  isBalanceHidden: boolean;
+  onOpenImportModal: () => void;
+}) {
+  const { business, version, refreshAll } = useBusinessData();
+  const [filter, setFilter] = useState<Filter>('ALL');
+  const [page, setPage] = useState(1);
+  const [savingId, setSavingId] = useState<number>();
+  const [error, setError] = useState<string>();
+  const list = useResource(
+    () => api.listTransactions(business.id, { page, pageSize: PAGE_SIZE }),
+    [business.id, page, version],
+  );
+
+  const transactions = list.data?.transactions ?? [];
+  const filtered = transactions.filter((t) => matches(filter, t));
+  const lastPage = list.data ? Math.max(1, Math.ceil(list.data.total / list.data.pageSize)) : 1;
+
+  async function correct(t: Transaction, label: LabelValue) {
+    if (label === t.label) return;
+    setSavingId(t.id);
+    setError(undefined);
+    try {
+      await api.correctTransaction(t.id, label);
+      // A correção também alcança as parecidas e marca a previsão para recálculo.
+      refreshAll();
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setSavingId(undefined);
+    }
+  }
 
   return (
     <section className="w-full space-y-5 pb-24 lg:pb-8">
-      
-      {/* Header do Módulo */}
       <div className="bg-white p-5 rounded-3xl border border-[#E6EFE2] shadow-2xs space-y-3">
         <div className="flex items-center justify-between">
           <div>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D7FD3C] text-black">
-              Separação de Contas
+              Separação de contas
             </span>
-            <h2 className="text-xl font-extrabold text-[#111827] mt-1">Transações PF vs PJ</h2>
+            <h2 className="text-xl font-extrabold text-[#111827] mt-1">Transações PF e PJ</h2>
           </div>
           <button
-            onClick={() => alert('Para importar, envie seu arquivo OFX ou CSV.')}
+            onClick={onOpenImportModal}
             className="px-3.5 py-1.5 rounded-full bg-[#111827] hover:bg-black text-[#D7FD3C] font-bold text-xs flex items-center gap-1.5 active:scale-95 shadow-2xs transition-all"
           >
             <Plus size={15} strokeWidth={2.5} />
-            <span>Subir OFX</span>
+            <span>Subir extrato</span>
           </button>
         </div>
 
-        {/* Alerta de Contas Misturadas (Diferencial GiG) */}
         <div className="p-3.5 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A] flex items-center gap-3">
           <AlertTriangle size={22} className="text-[#D97706] shrink-0" />
-          <div className="text-xs leading-tight">
-            <strong className="text-[#92400E]">28% de gastos pessoais identificados na conta jurídica</strong>
-            <p className="text-[#B45309] mt-0.5">Toque na etiqueta ao lado da transação para trocar de PF para PJ instantaneamente.</p>
-          </div>
+          <p className="text-xs leading-tight text-[#B45309]">
+            Se o GiG errou a classificação, troque a etiqueta. Ele aprende e corrige as transações
+            parecidas.
+          </p>
         </div>
 
-        {/* Filtros em Pílulas */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
-          <button
-            onClick={() => setFilter('ALL')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-              filter === 'ALL' ? 'bg-[#111827] text-white shadow-2xs' : 'bg-[#F1F5F9] text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            Todas ({transactions.length})
-          </button>
-          <button
-            onClick={() => setFilter('PJ')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-              filter === 'PJ' ? 'bg-[#10B981] text-white shadow-2xs' : 'bg-[#F1F5F9] text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            PJ Empresa
-          </button>
-          <button
-            onClick={() => setFilter('PF')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-              filter === 'PF' ? 'bg-[#D97706] text-white shadow-2xs' : 'bg-[#F1F5F9] text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            PF Pessoal
-          </button>
-          <button
-            onClick={() => setFilter('TAX')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-              filter === 'TAX' ? 'bg-[#EF4444] text-white shadow-2xs' : 'bg-[#F1F5F9] text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            Tributos / DAS
-          </button>
+          {FILTERS.map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setFilter(f.id)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                filter === f.id ? f.active : 'bg-[#F1F5F9] text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              {f.name}
+              {f.id === 'ALL' && list.data ? ` (${list.data.total})` : ''}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Lista de Transações */}
-      <div className="bg-white rounded-3xl border border-[#E6EFE2] shadow-2xs divide-y divide-[#F1F5E9] overflow-hidden">
-        {filtered.map((t) => (
-          <div key={t.id} className="p-4 sm:p-5 hover:bg-[#FBFDF8] transition-colors space-y-2">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3 min-w-0">
-                <div
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 mt-0.5 ${
-                    t.label === 'BUSINESS'
-                      ? 'bg-[#ECFDF5] text-[#10B981]'
-                      : t.label === 'PERSONAL'
-                        ? 'bg-[#FEF3C7] text-[#92400E]'
-                        : t.label === 'TAX'
-                          ? 'bg-[#FEF2F2] text-[#EF4444]'
-                          : t.label === 'WITHDRAWAL'
-                            ? 'bg-[#D7FD3C] text-black'
-                            : 'bg-[#EFF6FF] text-[#1E40AF]'
-                  }`}
+      <FormError message={error} />
+      {list.loading && !list.data && <LoadingCard />}
+      {list.error && <ErrorCard error={list.error} onRetry={() => void list.reload()} />}
+      {list.data && transactions.length === 0 && (
+        <EmptyCard title="Nenhuma transação ainda">
+          Envie um extrato CSV ou OFX da conta PJ.
+        </EmptyCard>
+      )}
+
+      {filtered.length > 0 && (
+        <div className="bg-white rounded-3xl border border-[#E6EFE2] shadow-2xs divide-y divide-[#F1F5E9] overflow-hidden">
+          {filtered.map((t) => (
+            <div key={t.id} className="p-4 sm:p-5 hover:bg-[#FBFDF8] transition-colors space-y-2">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div
+                    className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 mt-0.5 ${LABEL_STYLES[t.label]}`}
+                  >
+                    <LabelIcon label={t.label} />
+                  </div>
+                  <div className="min-w-0">
+                    {/* Texto do extrato sempre como texto, nunca como HTML. */}
+                    <p className="font-extrabold text-sm text-[#111827] truncate">
+                      {t.description}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      {formatDate(t.date)} • {t.category}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <p
+                    className={`font-black text-sm ${
+                      isNegative(t.amount) ? 'text-[#111827]' : 'text-[#10B981]'
+                    }`}
+                  >
+                    {formatSignedMoney(t.amount, isBalanceHidden)}
+                  </p>
+                  <span className="text-[10px] text-slate-400 uppercase font-semibold">
+                    {LABEL_SOURCE_NAMES[t.labelSource]}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1 text-xs">
+                <span className="text-slate-400 text-[11px]">Classificação:</span>
+                <select
+                  value={t.label}
+                  disabled={savingId === t.id}
+                  onChange={(e) => void correct(t, e.target.value as LabelValue)}
+                  className={`px-3 py-1 rounded-full font-bold text-xs border-0 ${LABEL_STYLES[t.label]}`}
                 >
-                  {t.label === 'BUSINESS' && <Building2 size={18} />}
-                  {t.label === 'PERSONAL' && <Tag size={18} />}
-                  {t.label === 'TAX' && <Receipt size={18} />}
-                  {t.label === 'WITHDRAWAL' && <Zap size={18} />}
-                  {t.label === 'SUPPLIER' && <Building2 size={18} />}
-                </div>
-                <div className="min-w-0">
-                  <p className="font-extrabold text-sm text-[#111827] truncate">{t.description}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">{t.date} • {t.category}</p>
-                </div>
-              </div>
-
-              <div className="text-right shrink-0">
-                <p className={`font-black text-sm ${t.amount.startsWith('+') ? 'text-[#10B981]' : 'text-[#111827]'}`}>
-                  {t.amount}
-                </p>
-                <span className="text-[10px] text-slate-400 uppercase font-semibold">{t.source}</span>
+                  {LABEL_VALUES.map((label) => (
+                    <option key={label} value={label}>
+                      {LABEL_NAMES[label]}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
+          ))}
+        </div>
+      )}
 
-            {/* Ação de 1 toque para alterar rótulo */}
-            <div className="flex items-center justify-between pt-1 text-xs">
-              <span className="text-slate-400 text-[11px]">Classificação contábil:</span>
-              <button
-                onClick={() => toggleLabel(t.id)}
-                className={`px-3 py-1 rounded-full font-bold text-xs active:scale-95 transition-transform ${
-                  t.label === 'PERSONAL'
-                    ? 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]'
-                    : t.label === 'BUSINESS'
-                      ? 'bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]'
-                      : t.label === 'TAX'
-                        ? 'bg-[#FEF2F2] text-[#991B1B]'
-                        : 'bg-slate-100 text-slate-700'
-                }`}
-              >
-                {t.label === 'PERSONAL'
-                  ? 'Pessoal PF (Clique p/ alternar)'
-                  : t.label === 'BUSINESS'
-                    ? 'Empresa PJ (Clique p/ alternar)'
-                    : t.label}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
+      {list.data && lastPage > 1 && (
+        <div className="flex items-center justify-center gap-3 text-xs">
+          <button
+            disabled={page <= 1}
+            onClick={() => setPage(page - 1)}
+            className="px-3 py-1.5 rounded-full bg-white border border-[#E6EFE2] font-bold disabled:opacity-50"
+          >
+            Anterior
+          </button>
+          <span className="text-[#64748B]">
+            Página {page} de {lastPage}
+          </span>
+          <button
+            disabled={page >= lastPage}
+            onClick={() => setPage(page + 1)}
+            className="px-3 py-1.5 rounded-full bg-white border border-[#E6EFE2] font-bold disabled:opacity-50"
+          >
+            Próxima
+          </button>
+        </div>
+      )}
     </section>
   );
 }

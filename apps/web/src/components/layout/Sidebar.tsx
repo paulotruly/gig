@@ -10,20 +10,24 @@ import {
   MessageSquare,
   Zap,
 } from '@/components/ui/icons';
+import { formatDate, formatMoney } from '@/lib/format';
+import { isForecastNotReady, useBusinessData } from '@/lib/session';
 
 export type ScreenId = 'home' | 'forecast' | 'transactions' | 'commitments' | 'tracks' | 'whatsapp';
 
 interface SidebarProps {
   currentScreen: ScreenId;
   onSelectScreen: (screen: ScreenId) => void;
+  isBalanceHidden: boolean;
 }
 
-export function Sidebar({ currentScreen, onSelectScreen }: SidebarProps) {
+export function Sidebar({ currentScreen, onSelectScreen, isBalanceHidden }: SidebarProps) {
+  const { forecast } = useBusinessData();
   const menuItems = [
     { id: 'home' as ScreenId, label: 'Início (Panorama)', icon: Home },
     { id: 'forecast' as ScreenId, label: 'Cenários & Fôlego', icon: LineChart },
     { id: 'transactions' as ScreenId, label: 'Transações PF / PJ', icon: ArrowLeftRight },
-    { id: 'commitments' as ScreenId, label: 'Metas & DAS MEI', icon: Receipt },
+    { id: 'commitments' as ScreenId, label: 'Compromissos e DAS', icon: Receipt },
     { id: 'tracks' as ScreenId, label: 'Trilhas Educativas', icon: GraduationCap },
     { id: 'whatsapp' as ScreenId, label: 'WhatsApp Copilot', icon: MessageSquare },
   ];
@@ -71,9 +75,23 @@ export function Sidebar({ currentScreen, onSelectScreen }: SidebarProps) {
           <span>Retirada Segura Hoje</span>
         </div>
 
-        <p className="text-xs text-slate-300 mb-1">Para sua conta pessoal este mês:</p>
-        <p className="text-2xl font-black text-white tracking-tight mb-1">R$ 1.850,00</p>
-        <p className="text-[11px] text-[#A3E635] font-medium">✓ Não compromete DAS nem contas</p>
+        {forecast.data ? (
+          <>
+            <p className="text-xs text-slate-300 mb-1">Para sua conta pessoal:</p>
+            <p className="text-2xl font-black text-white tracking-tight mb-1">
+              {formatMoney(forecast.data.safeWithdrawal, isBalanceHidden)}
+            </p>
+            <p className="text-[11px] text-[#A3E635] font-medium">
+              Calculada em {formatDate(forecast.data.generatedAt)}
+            </p>
+          </>
+        ) : (
+          <p className="text-xs text-slate-300">
+            {isForecastNotReady(forecast.error)
+              ? 'Envie um extrato para o GiG calcular quanto você pode retirar.'
+              : 'Carregando a previsão...'}
+          </p>
+        )}
 
         <button
           onClick={() => onSelectScreen('forecast')}
