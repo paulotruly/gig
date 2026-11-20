@@ -6,6 +6,7 @@ Plataforma de gestão financeira e educação empreendedora para MEIs, startups 
 
 | Pasta | Conteúdo |
 |---|---|
+| `apps/web` | Front-end em Next.js |
 | `apps/api` | API em Express |
 | `apps/worker` | Recálculo de previsões, envio de alertas, indicadores e sincronização |
 | `packages/shared` | Contratos e regras puras de classificação, previsão e alertas |
@@ -21,13 +22,35 @@ npm ci
 cp .env.example .env
 ```
 
-Ajuste o `.env` e aplique as migrações com um usuário que possa criar tabelas e gatilhos:
+Ajuste o `.env` e aplique as migrações com um usuário que possa criar tabelas e gatilhos (por exemplo, o `root` do MySQL local):
 
 ```sh
 DATABASE_URL="mysql://usuario:senha@127.0.0.1:3306/gig" npm run migrate
-npm run dev
-npm run dev:worker
 ```
+
+No PowerShell, defina a variável antes do comando: `$env:DATABASE_URL="mysql://..."; npm run migrate`.
+
+### Dados de demonstração
+
+Para ver o app com um negócio completo, rode a seed depois das migrações. Ela lê o `DATABASE_URL` do `.env` e cria um MEI fictício com seis meses de transações, compromissos, previsão e alertas:
+
+```sh
+npm run seed
+```
+
+Entre com `demo@gig.local` e a senha `demonstracao-gig`. A seed não roda com `NODE_ENV=production` e não duplica nada se o usuário já existir. Para recomeçar, recrie o banco local e aplique as migrações de novo.
+
+### Back-end e front-end
+
+Cada comando roda em um terminal:
+
+```sh
+npm run dev          # API em http://localhost:3000
+npm run dev:worker   # recálculo de previsões e alertas
+npm run dev:web      # front-end em http://localhost:3001
+```
+
+Abra `http://localhost:3001`. O front-end chama `/api` na mesma origem, e o Next encaminha para a API em `http://localhost:3000`; para outro endereço, defina `API_INTERNAL_URL` em `apps/web/.env.local`. Detalhes em `apps/web/README.md`.
 
 O WhatsApp usa um envio simulado, e o Open Finance ainda não tem provedor configurado.
 
@@ -51,7 +74,7 @@ DATABASE_URL="..." npm run partner:create --workspace @gig/api -- "Nome" ACCELER
 
 ## Implantação
 
-O `docker-compose.yml` sobe Nginx, API, worker, MySQL e backup. Defina as variáveis usadas nele e coloque os certificados em `infra/nginx/certs`.
+O `docker-compose.yml` sobe Nginx, front-end, API, worker, MySQL e backup. Defina as variáveis usadas nele e coloque os certificados em `infra/nginx/certs`.
 
 ```sh
 docker compose up -d

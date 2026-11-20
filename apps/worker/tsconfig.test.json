@@ -10,5 +10,5 @@
       "@gig/db": ["../../packages/db/src/index.ts"]
     }
   },
-  "include": ["src", "test"]
+  "include": ["src", "test", "scripts"]
 }

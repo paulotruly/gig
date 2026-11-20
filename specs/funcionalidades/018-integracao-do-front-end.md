@@ -38,7 +38,7 @@ As telas do `apps/web` deixam de usar dados fixos e passam a mostrar os dados do
 - [ ] C5: Quando corrijo o rótulo de uma transação, então a lista reflete a resposta da API.
 - [ ] C6: Quando crio ou excluo um compromisso, então a lista é atualizada.
 - [ ] C7: Sem previsão gerada, o painel e a tela de cenários explicam que falta histórico; com previsão, mostram os três cenários, o runway e a explicação.
-- [ ] C8: `GET /auth/me` responde o usuário da sessão e `401` sem sessão.
+- [x] C8: `GET /auth/me` responde o usuário da sessão e `401` sem sessão.
 
 ## Plano técnico
 
