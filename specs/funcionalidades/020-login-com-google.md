@@ -1,6 +1,6 @@
 # 020: login com Google
 
-**Situação:** `em andamento`
+**Situação:** `concluída`
 **Depende de:** 004
 **Referências:** `specs/contrato-api.md`, `specs/constituicao.md` (regras 7, 8 e 9), [decisão 0004](../decisoes/0004-implantacao-puxada-pelo-servidor.md)
 
@@ -53,7 +53,7 @@ Quem usa o GiG pode entrar e criar a conta com o Google, sem criar senha. Isso r
 - [x] T3: rotas do Google, vínculo, criação e auditoria, com testes de integração.
 - [x] T4: `POST /auth/login` recusa conta sem senha.
 - [x] T5: botão e erro na tela de entrada.
-- [ ] T6: cliente OAuth no Google Cloud e segredo no `.env` do servidor.
+- [x] T6: cliente OAuth no Google Cloud e segredo no `.env` do servidor.
 
 ## Notas
 
@@ -61,6 +61,6 @@ O cliente OAuth é do tipo "Aplicativo da Web", com a origem `https://gigreat.on
 
 ### Implementação e verificação
 
-T1 a T5 implementadas. C1 a C6 têm cobertura em `apps/api/test/integration/google-auth.test.ts`; a execução contra MySQL fica para o CI. T6 permanece manual e não foi executada.
+C1 a C6 têm cobertura em `apps/api/test/integration/google-auth.test.ts`, que roda contra MySQL no CI. Em 20/11/2026, o cliente OAuth foi criado, os segredos foram gravados no `.env` do servidor, e um login real em `https://gigreat.online` funcionou. Conta Google sem nome de perfil recebe como nome a parte do e-mail antes do `@`.
 
 O método Google é registrado como `targetType: "google"`, pois o formato existente de `audit` não possui metadados livres. O cookie da tentativa tem assinatura HMAC e expiração conferida no servidor. Um vínculo Google existente não é substituído por outro `sub`; falhas concorrentes de vínculo seguem o redirecionamento de erro. Criação, vínculo, sessão e auditoria são transacionais.
