@@ -36,7 +36,7 @@ export function ForecastScreen({ isBalanceHidden }: { isBalanceHidden: boolean }
         </div>
         <p className="text-xs text-[#64748B]">
           Saiba com antecedência se o caixa aguenta o ritmo das despesas e das retiradas. O GiG
-          recalcula sempre que entram dados novos.
+          recalcula a previsão alguns minutos depois de cada dado novo.
         </p>
 
         <div className="grid grid-cols-3 p-1 bg-[#EEF4E8] rounded-2xl border border-[#DFE8D7] gap-1">

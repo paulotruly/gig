@@ -16,8 +16,7 @@ const ICONS: Record<string, typeof Waves> = {
 
 export function TracksScreen() {
   const { business } = useBusinessData();
-  const tracks = useResource(() => api.listTracks(), []);
-  // A API ainda não devolve o progresso salvo (P-17); mostra o que foi registrado agora.
+  const tracks = useResource(() => api.listTracks(business.id), [business.id]);
   const [progress, setProgress] = useState<Record<number, number>>({});
   const [error, setError] = useState<string>();
 
@@ -51,7 +50,7 @@ export function TracksScreen() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {tracks.data?.tracks.map((track) => {
           const Icon = ICONS[track.slug] ?? Waves;
-          const percent = progress[track.id];
+          const percent = progress[track.id] ?? track.percent ?? 0;
           const done = percent === 100;
           return (
             <div

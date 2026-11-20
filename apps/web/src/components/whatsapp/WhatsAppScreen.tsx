@@ -142,9 +142,9 @@ export function WhatsAppScreen() {
               Por que o WhatsApp é o canal central?
             </h3>
             <p className="text-xs text-gig-muted leading-relaxed">
-              68% dos MEIs abandonam ERPs e planilhas porque exigem login e disciplina contínua. A
-              GiG inverte a lógica: o sistema trabalha em segundo plano com Open Finance e só chama
-              você pelo WhatsApp quando há uma decisão importante a tomar.
+              Cuidar do negócio fica mais simples quando as informações estão organizadas. O GiG usa
+              os extratos que você envia para preparar previsões e alertas. O canal do WhatsApp
+              ainda está em fase de demonstração, com envio simulado.
             </p>
 
             <div className="pt-2 space-y-2 text-xs">

@@ -159,6 +159,7 @@ describe('isolamento entre negócios', () => {
     const base = `/businesses/${businessId}`;
 
     await stranger.agent.get(`${base}/transactions`).expect(404);
+    await stranger.agent.get(`/tracks?businessId=${businessId}`).expect(404);
     await stranger.agent.get(`${base}/forecast`).expect(404);
     await stranger.agent.get(`${base}/alerts`).expect(404);
     await stranger.agent.get(`${base}/commitments`).expect(404);

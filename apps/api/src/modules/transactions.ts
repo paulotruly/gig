@@ -23,6 +23,7 @@ export function transactionsRouter({ prisma, authenticate }: RouterDeps): Router
     const query = parse(listTransactionsQuery, req.query);
     const where = {
       businessId,
+      ...(query.q ? { description: { contains: query.q } } : {}),
       date: {
         ...(query.from ? { gte: fromIsoDate(query.from) } : {}),
         ...(query.to ? { lte: fromIsoDate(query.to) } : {}),

@@ -21,6 +21,14 @@ import { BusinessDataProvider, SessionProvider, useBusinessData, useSession } fr
 
 // Preferência visual: guardar no navegador não expõe nenhum dado.
 const HIDDEN_KEY = 'gig:saldo-oculto';
+const SCREEN_HASH: Record<ScreenId, string> = {
+  home: 'inicio',
+  forecast: 'cenarios',
+  transactions: 'transacoes',
+  commitments: 'compromissos',
+  tracks: 'trilhas',
+  whatsapp: 'whatsapp',
+};
 
 export default function Home() {
   return (
@@ -51,6 +59,18 @@ function Gate() {
 function AppShell() {
   const { alerts } = useBusinessData();
   const [currentTab, setCurrentTab] = useState<ScreenId>('home');
+  const [focusSearch, setFocusSearch] = useState(0);
+  useEffect(() => {
+    const syncHash = () => {
+      const screen = (Object.keys(SCREEN_HASH) as ScreenId[]).find(
+        (id) => `#${SCREEN_HASH[id]}` === window.location.hash,
+      );
+      setCurrentTab(screen ?? 'home');
+    };
+    syncHash();
+    window.addEventListener('hashchange', syncHash);
+    return () => window.removeEventListener('hashchange', syncHash);
+  }, []);
   const [isBalanceHidden, setIsBalanceHidden] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
@@ -77,14 +97,16 @@ function AppShell() {
 
   const openImport = () => setIsImportModalOpen(true);
   const openNotifications = () => setIsNotificationModalOpen(true);
-  const navigate = (tab: string) => setCurrentTab(tab as ScreenId);
+  const navigate = (tab: string) => {
+    window.location.hash = SCREEN_HASH[tab as ScreenId] ?? SCREEN_HASH.home;
+  };
 
   return (
     <div className="min-h-screen bg-[#F8FAF5] flex flex-col text-[#111827] selection:bg-[#D7FD3C] selection:text-black antialiased">
       <div className="flex-1 flex flex-col">
         <div className="hidden lg:block">
           <Header
-            onSelectScreen={setCurrentTab}
+            onSelectScreen={navigate}
             isBalanceHidden={isBalanceHidden}
             onToggleBalance={toggleBalance}
             onOpenNotifications={openNotifications}
@@ -98,8 +120,11 @@ function AppShell() {
             isBalanceHidden={isBalanceHidden}
             onToggleBalance={toggleBalance}
             onOpenNotifications={openNotifications}
-            onOpenSearch={() => setCurrentTab('transactions')}
-            onOpenCopilot={() => setCurrentTab('whatsapp')}
+            onOpenSearch={() => {
+              setFocusSearch((value) => value + 1);
+              navigate('transactions');
+            }}
+            onOpenCopilot={() => navigate('whatsapp')}
             alertCount={alertCount}
           />
         </div>
@@ -107,7 +132,7 @@ function AppShell() {
         <div className="w-full max-w-7xl mx-auto flex-1 flex gap-6 px-4 sm:px-6 lg:px-8 py-4 lg:py-6 items-start">
           <Sidebar
             currentScreen={currentTab}
-            onSelectScreen={setCurrentTab}
+            onSelectScreen={navigate}
             isBalanceHidden={isBalanceHidden}
           />
 
@@ -134,6 +159,7 @@ function AppShell() {
             {currentTab === 'forecast' && <ForecastScreen isBalanceHidden={isBalanceHidden} />}
             {currentTab === 'transactions' && (
               <TransactionsScreen
+                focusSearch={focusSearch}
                 isBalanceHidden={isBalanceHidden}
                 onOpenImportModal={openImport}
               />
@@ -148,8 +174,8 @@ function AppShell() {
 
         <div className="lg:hidden">
           <BottomNav
-            currentTab={currentTab === 'whatsapp' ? 'home' : (currentTab as MobileTab)}
-            onSelectTab={(tab) => setCurrentTab(tab)}
+            currentTab={currentTab === 'whatsapp' ? null : (currentTab as MobileTab)}
+            onSelectTab={navigate}
             dasAlertCount={alertCount}
           />
         </div>
@@ -161,7 +187,7 @@ function AppShell() {
           onClose={() => setIsNotificationModalOpen(false)}
           onOpenTracks={() => {
             setIsNotificationModalOpen(false);
-            setCurrentTab('tracks');
+            navigate('tracks');
           }}
         />
       )}

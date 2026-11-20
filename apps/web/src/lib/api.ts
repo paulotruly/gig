@@ -121,8 +121,12 @@ export const api = {
       raw: { text: file.text, type: file.format === 'csv' ? 'text/csv' : 'application/x-ofx' },
     }),
 
-  listTransactions: (businessId: number, query: { page?: number; pageSize?: number } = {}) => {
+  listTransactions: (
+    businessId: number,
+    query: { page?: number; pageSize?: number; q?: string } = {},
+  ) => {
     const params = new URLSearchParams();
+    if (query.q) params.set('q', query.q);
     if (query.page) params.set('page', String(query.page));
     if (query.pageSize) params.set('pageSize', String(query.pageSize));
     const qs = params.size > 0 ? `?${params}` : '';
@@ -142,7 +146,10 @@ export const api = {
     request<ForecastResponse>(`/businesses/${businessId}/forecast`),
   listAlerts: (businessId: number) => request<AlertsResponse>(`/businesses/${businessId}/alerts`),
 
-  listTracks: () => request<TracksResponse>('/tracks'),
+  listTracks: (businessId?: number) =>
+    request<TracksResponse>(
+      businessId === undefined ? '/tracks' : `/tracks?businessId=${businessId}`,
+    ),
   saveTrackProgress: (trackId: number, businessId: number, percent: number) =>
     request<TrackProgressResponse>(`/tracks/${trackId}/progress`, {
       method: 'POST',

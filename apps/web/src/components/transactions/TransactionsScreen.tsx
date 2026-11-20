@@ -1,7 +1,7 @@
 'use client';
 
 import { LABEL_VALUES, type LabelValue, type Transaction } from '@gig/shared/contracts';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, Building2, Plus, Receipt, Tag, Zap } from '@/components/ui/icons';
 import { EmptyCard, ErrorCard, FormError, LoadingCard } from '@/components/ui/states';
 import { api } from '@/lib/api';
@@ -52,18 +52,33 @@ function LabelIcon({ label }: { label: LabelValue }) {
 export function TransactionsScreen({
   isBalanceHidden,
   onOpenImportModal,
+  focusSearch = 0,
 }: {
   isBalanceHidden: boolean;
+  focusSearch?: number;
   onOpenImportModal: () => void;
 }) {
   const { business, version, refreshAll } = useBusinessData();
   const [filter, setFilter] = useState<Filter>('ALL');
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [q, setQ] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setQ(search.trim());
+      setPage(1);
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [search]);
+  useEffect(() => {
+    if (focusSearch > 0) searchRef.current?.focus();
+  }, [focusSearch]);
   const [savingId, setSavingId] = useState<number>();
   const [error, setError] = useState<string>();
   const list = useResource(
-    () => api.listTransactions(business.id, { page, pageSize: PAGE_SIZE }),
-    [business.id, page, version],
+    () => api.listTransactions(business.id, { page, pageSize: PAGE_SIZE, q: q || undefined }),
+    [business.id, page, q, version],
   );
 
   const transactions = list.data?.transactions ?? [];
@@ -112,11 +127,42 @@ export function TransactionsScreen({
           </p>
         </div>
 
+        <div className="flex items-center gap-2">
+          <label htmlFor="transaction-search" className="text-xs font-bold">
+            Buscar transações
+          </label>
+          <input
+            id="transaction-search"
+            ref={searchRef}
+            type="search"
+            maxLength={100}
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Buscar pela descrição"
+            className="min-w-0 flex-1 rounded-xl border border-[#E6EFE2] p-2 text-sm"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setSearch('');
+              setQ('');
+              setPage(1);
+              searchRef.current?.focus();
+            }}
+            className="text-xs font-bold"
+          >
+            Limpar
+          </button>
+        </div>
+
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
           {FILTERS.map((f) => (
             <button
               key={f.id}
-              onClick={() => setFilter(f.id)}
+              onClick={() => {
+                setFilter(f.id);
+                setPage(1);
+              }}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 filter === f.id ? f.active : 'bg-[#F1F5F9] text-slate-700 hover:bg-slate-200'
               }`}
@@ -132,8 +178,10 @@ export function TransactionsScreen({
       {list.loading && !list.data && <LoadingCard />}
       {list.error && <ErrorCard error={list.error} onRetry={() => void list.reload()} />}
       {list.data && transactions.length === 0 && (
-        <EmptyCard title="Nenhuma transação ainda">
-          Envie um extrato CSV ou OFX da conta PJ.
+        <EmptyCard title={q ? 'Nenhuma transação encontrada' : 'Nenhuma transação ainda'}>
+          {q
+            ? 'Tente outra descrição ou limpe a busca.'
+            : 'Envie um extrato CSV ou OFX da conta PJ.'}
         </EmptyCard>
       )}
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useId } from 'react';
 import { Bell, X } from '@/components/ui/icons';
 import { EmptyCard, ErrorCard, LoadingCard } from '@/components/ui/states';
 import { formatDate } from '@/lib/format';
@@ -13,18 +13,38 @@ export function NotificationsModal({
   onClose: () => void;
   onOpenTracks: () => void;
 }) {
+  const titleId = useId();
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
   const { alerts } = useBusinessData();
   const list = alerts.data?.alerts ?? [];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center sm:p-4">
-      <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#E6EFE2] space-y-4 max-h-[85vh] overflow-y-auto">
+    <div
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center sm:p-4"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="bg-white rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#E6EFE2] space-y-4 max-h-[85vh] overflow-y-auto"
+      >
         <div className="flex items-center justify-between pb-3 border-b border-[#F1F5E9]">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-[#F3FCE2] flex items-center justify-center text-[#294A07]">
               <Bell size={18} />
             </div>
-            <h3 className="font-black text-base text-[#111827]">Notificações e alertas</h3>
+            <h3 id={titleId} className="font-black text-base text-[#111827]">
+              Notificações e alertas
+            </h3>
           </div>
           <button
             onClick={onClose}

@@ -33,6 +33,12 @@ Fonte: [09] §06 e [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.
 | `GET /webhooks/whatsapp` | Verificar o webhook | WhatsApp Business |
 | `POST /webhooks/whatsapp` | Receber mensagens do canal | WhatsApp Business |
 
+## Filtros de transações e progresso das trilhas
+
+`GET /businesses/:id/transactions` aceita `from` e `to` (datas ISO), `page` (padrão 1), `pageSize` (1 a 200, padrão 50) e `q` opcional (1 a 100 caracteres após remover espaços nas pontas). A busca verifica se a descrição contém o texto, sem diferenciar maiúsculas e minúsculas. O filtro se combina com o período e se aplica ao `total` e à paginação.
+
+`GET /tracks` aceita `businessId` opcional (inteiro positivo). Com ele, verifica o acesso do dono ao negócio e inclui `percent` (0 a 100) em cada trilha, com 0 quando não há progresso. Sem ele, mantém o catálogo sem `percent`. Negócio de outro usuário responde 404, como as demais rotas de negócio.
+
 ## Login com Google
 
 O início usa PKCE S256, `state` e `nonce`, com cookie `httpOnly`, `SameSite=Lax`, válido por 10 minutos no caminho `/api/auth/google`. O callback apaga esse cookie, valida o token recebido do Google e redireciona para `APP_BASE_URL`; em falha, redireciona para `APP_BASE_URL/?erro=google`, sem abrir sessão. A URL de retorno cadastrada é `APP_BASE_URL/api/auth/google/callback`. Contas sem senha recebem `invalid_credentials` no login por senha. O provedor só é habilitado quando `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` estão preenchidos.

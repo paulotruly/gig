@@ -116,6 +116,36 @@ describe('entrada assistida', () => {
   });
 });
 
+describe('busca de transações', () => {
+  it('filtra descrição sem diferenciar maiúsculas, com total e paginação filtrados', async () => {
+    const { agent, base } = await readyBusiness();
+    await upload(agent, base, CSV).expect(201);
+    const first = await agent
+      .get(`${base}/transactions`)
+      .query({ q: '  FARMÁCIA  ', pageSize: 1 })
+      .expect(200);
+    expect(first.body).toMatchObject({ total: 2, page: 1, pageSize: 1 });
+    expect(first.body.transactions).toHaveLength(1);
+    expect(first.body.transactions[0].description).toBe('Farmácia 456');
+    const second = await agent
+      .get(`${base}/transactions`)
+      .query({ q: 'farmácia', pageSize: 1, page: 2 })
+      .expect(200);
+    expect(second.body.total).toBe(2);
+    expect(second.body.transactions[0].description).toBe('Farmácia 123');
+    const range = await agent
+      .get(`${base}/transactions`)
+      .query({ q: 'farmácia', from: '2026-10-08' })
+      .expect(200);
+    expect(range.body.total).toBe(1);
+    const empty = await agent.get(`${base}/transactions`).query({ q: 'inexistente' }).expect(200);
+    expect(empty.body).toMatchObject({ total: 0, transactions: [] });
+    for (const q of ['', '   ', 'a'.repeat(101)]) {
+      await agent.get(`${base}/transactions`).query({ q }).expect(400);
+    }
+  });
+});
+
 describe('correção da classificação', () => {
   it('aprende, alcança as parecidas e nunca sobrescreve outra correção', async () => {
     const { agent, base, businessId } = await readyBusiness();
@@ -225,6 +255,31 @@ describe('compromissos', () => {
 });
 
 describe('previsão, alertas e trilhas', () => {
+  it('lista o progresso apenas do negócio solicitado e omite percent sem businessId', async () => {
+    const { agent, businessId } = await readyBusiness();
+    const otherBusinessId = await createBusiness(agent);
+    const catalog = await agent.get('/tracks').expect(200);
+    const trackId = catalog.body.tracks[0].id;
+    for (const track of catalog.body.tracks) expect(track).not.toHaveProperty('percent');
+    await agent.post(`/tracks/${trackId}/progress`).send({ businessId, percent: 100 }).expect(200);
+    await agent
+      .post(`/tracks/${trackId}/progress`)
+      .send({ businessId: otherBusinessId, percent: 30 })
+      .expect(200);
+    const own = await agent.get('/tracks').query({ businessId }).expect(200);
+    expect(tracksResponse.safeParse(own.body).success).toBe(true);
+    for (const track of own.body.tracks) {
+      expect(track.percent).toBe(track.id === trackId ? 100 : 0);
+    }
+    const other = await agent.get('/tracks').query({ businessId: otherBusinessId }).expect(200);
+    expect(other.body.tracks.find((track: { id: number }) => track.id === trackId).percent).toBe(
+      30,
+    );
+    for (const invalid of ['0', '-1', 'abc', '1.5']) {
+      await agent.get('/tracks').query({ businessId: invalid }).expect(400);
+    }
+  });
+
   it('sem previsão responde forecast_not_ready', async () => {
     const { agent, base } = await readyBusiness();
     const res = await agent.get(`${base}/forecast`).expect(404);

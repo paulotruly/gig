@@ -6,7 +6,7 @@ import { Home, LineChart, ArrowLeftRight, Receipt, GraduationCap } from '@/compo
 export type MobileTab = 'home' | 'forecast' | 'transactions' | 'commitments' | 'tracks';
 
 interface BottomNavProps {
-  currentTab: MobileTab;
+  currentTab: MobileTab | null;
   onSelectTab: (tab: MobileTab) => void;
   dasAlertCount?: number;
 }

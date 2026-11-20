@@ -1,4 +1,4 @@
-import { trackProgressBody } from '@gig/shared/contracts';
+import { listTracksQuery, trackProgressBody } from '@gig/shared/contracts';
 import { Router } from 'express';
 import type { RouterDeps } from '../deps';
 import { notFoundError } from '../errors';
@@ -8,9 +8,21 @@ import { currentUserId, requireBusinessRole } from '../middlewares/auth';
 export function tracksRouter({ prisma, authenticate }: RouterDeps): Router {
   const router = Router();
 
-  router.get('/tracks', authenticate, async (_req, res) => {
+  router.get('/tracks', authenticate, async (req, res) => {
+    const { businessId } = parse(listTracksQuery, req.query);
+    if (businessId !== undefined) {
+      await requireBusinessRole(prisma, currentUserId(req), businessId);
+    }
     const tracks = await prisma.track.findMany({ orderBy: { id: 'asc' } });
-    res.json({ tracks });
+    if (businessId === undefined) {
+      res.json({ tracks });
+      return;
+    }
+    const progress = await prisma.trackProgress.findMany({ where: { businessId } });
+    const percentByTrack = new Map(progress.map((p) => [p.trackId, p.percent]));
+    res.json({
+      tracks: tracks.map((track) => ({ ...track, percent: percentByTrack.get(track.id) ?? 0 })),
+    });
   });
 
   router.post('/tracks/:id/progress', authenticate, async (req, res) => {

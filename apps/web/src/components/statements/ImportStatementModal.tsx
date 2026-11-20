@@ -1,7 +1,7 @@
 'use client';
 
 import type { StatementUploadResponse } from '@gig/shared/contracts';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { FolderUp, X, CheckCircle2 } from '@/components/ui/icons';
 import { FormError } from '@/components/ui/states';
 import { api, ApiError, INGESTION_CONSENT_SCOPE, STATEMENT_MAX_BYTES } from '@/lib/api';
@@ -16,6 +16,14 @@ function formatOf(file: File): 'csv' | 'ofx' | undefined {
 }
 
 export function ImportStatementModal({ onClose }: { onClose: () => void }) {
+  const titleId = useId();
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
   const { business, refreshAll } = useBusinessData();
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File>();
@@ -65,11 +73,23 @@ export function ImportStatementModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#E6EFE2] space-y-4">
+    <div
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#E6EFE2] space-y-4"
+      >
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-black text-lg text-[#111827]">Importar extrato bancário PJ</h3>
+            <h3 id={titleId} className="font-black text-lg text-[#111827]">
+              Importar extrato bancário PJ
+            </h3>
             <p className="text-xs text-[#64748B] mt-0.5">
               O GiG classifica receitas, despesas e retiradas a partir do arquivo.
             </p>

@@ -8,7 +8,7 @@ Lacunas e conflitos encontrados nos documentos. Ao resolver um item, remova-o da
 |---|---|---|
 | P-15 | O [09] não define a exclusão de dados a pedido do titular (LGPD), e `consents` e `audit_log` são só de inserção | 005, 016 |
 | P-16 | Falta conteúdo real para as trilhas: as quatro atuais só têm título e resumo provisórios | 012 |
-| P-17 | As telas do `apps/web` mostram dados que a API não fornece: totais de receitas e despesas do mês, metas com percentual, fluxo de caixa por período e progresso salvo das trilhas. Falta definir as regras no back-end antes de exibi-los | 018 |
+| P-17 | As telas do `apps/web` mostram dados que a API não fornece: totais de receitas e despesas do mês, metas com percentual e fluxo de caixa por período (o progresso das trilhas foi resolvido na 021). Falta definir as regras no back-end antes de exibi-los | 018 |
 | P-08 | Não está definido como acessar o Open Finance (participação regulada ou intermediário), e o limite jurídico da automação continua em aberto desde [01] | 015 |
 
 

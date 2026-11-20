@@ -62,6 +62,7 @@ export const createConsentBody = z.strictObject({
 export const statementQuery = z.object({ format: z.enum(['csv', 'ofx']) });
 
 export const listTransactionsQuery = z.object({
+  q: z.string().trim().min(1).max(100).optional(),
   from: isoDate.optional(),
   to: isoDate.optional(),
   page: z.coerce.number().int().min(1).default(1),
@@ -76,6 +77,10 @@ export const createCommitmentBody = z.strictObject({
   amount: positiveDecimal,
   dueDate: isoDate,
   recurrence: z.enum(['NONE', 'MONTHLY']).default('NONE'),
+});
+
+export const listTracksQuery = z.object({
+  businessId: z.coerce.number().int().positive().optional(),
 });
 
 export const trackProgressBody = z.strictObject({
@@ -186,6 +191,7 @@ const track = z.object({
   slug: z.string(),
   title: z.string(),
   summary: z.string(),
+  percent: z.number().int().min(0).max(100).optional(),
 });
 export type Track = z.infer<typeof track>;
 export const tracksResponse = z.object({ tracks: z.array(track) });
