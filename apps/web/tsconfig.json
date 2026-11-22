@@ -12,9 +12,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["./src/*"],
       "@gig/shared": ["../../packages/shared/src/index.ts"],
       "@gig/shared/contracts": ["../../packages/shared/src/contracts/index.ts"]
     },
