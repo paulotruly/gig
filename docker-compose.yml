@@ -1,7 +1,8 @@
 # Só o Nginx publica portas: / vai para o web, e /api e /webhooks, para a API.
 services:
   nginx:
-    image: nginx:1.27
+    # Versão fixa e corrigida: a 1.27 está sem suporte e na faixa das CVEs do HTTP/2 (ver a 023).
+    image: nginx:1.30.7
     restart: unless-stopped
     ports:
       - '80:80'
