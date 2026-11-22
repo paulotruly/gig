@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111827" />
+    <title>GiG - Sem conexão</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8faf5;
+        color: #111827;
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+        text-align: center;
+        padding: 16px;
+      }
+      img {
+        width: 96px;
+        height: 96px;
+        border-radius: 24px;
+      }
+      h1 {
+        font-size: 1.25rem;
+        margin: 16px 0 8px;
+      }
+      p {
+        color: #64748b;
+        margin: 0 0 24px;
+      }
+      button {
+        background: #d7fd3c;
+        color: #111827;
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 20px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/icons/icon-192.png" alt="GiG" />
+      <h1>Você está sem conexão</h1>
+      <p>Os dados do seu negócio só aparecem com internet. Confira a conexão e tente de novo.</p>
+      <button type="button" onclick="location.reload()">Tentar de novo</button>
+    </main>
+  </body>
+</html>

@@ -1,10 +1,13 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'GiG - Greed is Great | Gestão Financeira e Educação Empreendedora',
   description:
     'Plataforma de gestão financeira e educação empreendedora para MEIs, startups e pequenos negócios.',
+  applicationName: 'GiG',
+  appleWebApp: { capable: true, title: 'GiG', statusBarStyle: 'default' },
   icons: {
     icon: [{ url: '/favicon.ico' }, { url: '/icon.png', type: 'image/png', sizes: '64x64' }],
     shortcut: '/favicon.ico',
@@ -12,10 +15,17 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: '#111827',
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body className="antialiased bg-[#F8FAF5] text-[#111827]">{children}</body>
+      <body className="antialiased bg-[#F8FAF5] text-[#111827]">
+        {children}
+        <ServiceWorkerRegister />
+      </body>
     </html>
   );
 }
