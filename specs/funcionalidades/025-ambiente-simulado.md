@@ -1,6 +1,6 @@
 # 025: ambiente simulado
 
-**Situação:** `em andamento`
+**Situação:** `concluída`
 **Depende de:** 004, 007, 008, 009, 011, 012, 019
 **Referências:** `specs/motor-de-previsao.md`, `specs/constituicao.md` (regras 7, 9, 11, 12 e 18)
 
@@ -48,3 +48,5 @@ Num ambiente de simulação, todo negócio criado já nasce com histórico, sald
 O teste de integração (`apps/api/test/integration/simulation.test.ts`) cobre C1 e C3 e passou contra o MySQL 8.0. C2 e C4 estão cobertos pelos testes unitários do gerador, que passam cada cenário pela previsão e pelos alertas reais. Numa conferência manual, oito negócios simulados passaram pelo `recalculateBusiness` do worker: o recém-aberto ficou com histórico insuficiente, e os demais ganharam previsão; o de caixa negativo iminente gerou os alertas de saldo negativo.
 
 Perfis: MEI (estúdio de design, confeitaria, salão de beleza, fotografia), ME (loja de roupas, oficina mecânica, restaurante), startup (SaaS, aplicativo de entregas) e prestador de serviços (reformas elétricas, consultoria, suporte de TI).
+
+O modo está ligado em produção desde 22/11/2026 ([decisão 0005](../decisoes/0005-producao-como-ambiente-simulado.md)). Na conferência, uma conta de teste (`@exemplo.test`) criou o negócio 3 pela API pública. Ele recebeu 216 transações, 3 compromissos e o cenário `caixa-negativo-iminente`; o worker calculou a previsão e gerou os alertas de saldo negativo nos cenários conservador e provável.
