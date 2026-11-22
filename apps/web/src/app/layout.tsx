@@ -6,10 +6,7 @@ export const metadata: Metadata = {
   description:
     'Plataforma de gestão financeira e educação empreendedora para MEIs, startups e pequenos negócios.',
   icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/icon.png', type: 'image/png', sizes: '64x64' },
-    ],
+    icon: [{ url: '/favicon.ico' }, { url: '/icon.png', type: 'image/png', sizes: '64x64' }],
     shortcut: '/favicon.ico',
     apple: '/apple-icon.png',
   },
