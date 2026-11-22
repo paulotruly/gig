@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "online.gigreat.app",
+      "sha256_cert_fingerprints": [
+        "3D:30:EC:35:27:E0:09:FA:FA:9A:85:D1:09:37:86:3B:8A:F2:5E:0D:E6:1C:16:7B:DB:2C:1F:92:40:35:1B:3F"
+      ]
+    }
+  }
+]

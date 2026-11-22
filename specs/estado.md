@@ -12,7 +12,7 @@ A [020](funcionalidades/020-login-com-google.md) permite entrar e criar a conta 
 
 ## Funcionalidade em andamento
 
-- [026: PWA](funcionalidades/026-pwa.md): manifesto, ícones, service worker e página offline no `apps/web`; falta implantar e conferir no PWABuilder.
+- [026: PWA](funcionalidades/026-pwa.md): concluída; o pacote Android `online.gigreat.app` foi gerado e falta publicar na Play Store.
 - [023: atualização do Nginx](funcionalidades/023-atualizacao-do-nginx.md): imagem trocada para `nginx:1.30.7` por causa das CVE-2026-123007 e CVE-2026-123633; falta implantar e conferir o servidor.
 - [015: Open Finance](funcionalidades/015-open-finance.md): falta o provedor real, que depende da P-08.
 
