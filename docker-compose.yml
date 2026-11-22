@@ -37,6 +37,7 @@ services:
       TRUST_PROXY_HOPS: '1'
       WHATSAPP_APP_SECRET: ${WHATSAPP_APP_SECRET:-}
       WHATSAPP_VERIFY_TOKEN: ${WHATSAPP_VERIFY_TOKEN:-}
+      SIMULATION_MODE: ${SIMULATION_MODE:-}
     depends_on:
       migrate:
         condition: service_completed_successfully

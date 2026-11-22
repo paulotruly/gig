@@ -28,6 +28,14 @@ describe('loadConfig', () => {
     expect(config.WHATSAPP_VERIFY_TOKEN).toBeUndefined();
   });
 
+  it('só liga o ambiente simulado com o texto true', () => {
+    expect(loadConfig({ DATABASE_URL }).SIMULATION_MODE).toBe(false);
+    expect(loadConfig({ DATABASE_URL, SIMULATION_MODE: '' }).SIMULATION_MODE).toBe(false);
+    expect(loadConfig({ DATABASE_URL, SIMULATION_MODE: 'false' }).SIMULATION_MODE).toBe(false);
+    expect(loadConfig({ DATABASE_URL, SIMULATION_MODE: 'true' }).SIMULATION_MODE).toBe(true);
+    expect(() => loadConfig({ DATABASE_URL, SIMULATION_MODE: 'sim' })).toThrow('SIMULATION_MODE');
+  });
+
   it('exige o banco e, em produção, a conexão somente leitura do parceiro', () => {
     expect(() => loadConfig({})).toThrow('DATABASE_URL');
     expect(() => loadConfig({ DATABASE_URL, NODE_ENV: 'production' })).toThrow(

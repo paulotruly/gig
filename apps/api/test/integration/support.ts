@@ -18,6 +18,7 @@ export function createTestApp(
     googleOAuth?: GoogleOAuth;
     GOOGLE_CLIENT_ID?: string;
     GOOGLE_CLIENT_SECRET?: string;
+    SIMULATION_MODE?: string;
   } = {},
 ) {
   const prisma = createPrisma(databaseUrl);
@@ -26,6 +27,7 @@ export function createTestApp(
     NODE_ENV: 'test',
     GOOGLE_CLIENT_ID: overrides.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: overrides.GOOGLE_CLIENT_SECRET,
+    SIMULATION_MODE: overrides.SIMULATION_MODE,
     DATABASE_URL: databaseUrl,
     WHATSAPP_APP_SECRET: WHATSAPP_SECRET,
     WHATSAPP_VERIFY_TOKEN: 'token-de-verificacao',

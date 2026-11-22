@@ -5,8 +5,9 @@ import type { RouterDeps } from '../deps';
 import { HttpError, notFoundError } from '../errors';
 import { audit, parse, parseId } from '../http';
 import { currentUserId, requireBusinessRole } from '../middlewares/auth';
+import { populateSimulatedBusiness } from './simulation';
 
-export function businessesRouter({ prisma, authenticate }: RouterDeps): Router {
+export function businessesRouter({ prisma, config, authenticate }: RouterDeps): Router {
   const router = Router();
   router.use('/businesses', authenticate);
 
@@ -21,20 +22,25 @@ export function businessesRouter({ prisma, authenticate }: RouterDeps): Router {
       }
       partnerId = partner.id;
     }
-    const business = await prisma.business.create({
-      data: {
-        name: body.name,
-        type: body.type,
-        partnerId,
-        members: { create: { userId, role: 'OWNER' } },
+    const business = await prisma.$transaction(
+      async (tx) => {
+        const created = await tx.business.create({
+          data: {
+            name: body.name,
+            type: body.type,
+            partnerId,
+            members: { create: { userId, role: 'OWNER' } },
+          },
+          select: { id: true, name: true, type: true },
+        });
+        await audit(tx, { actorUserId: userId, businessId: created.id, action: 'business.create' });
+        if (config.SIMULATION_MODE) {
+          await populateSimulatedBusiness(tx, { businessId: created.id, userId, type: body.type });
+        }
+        return created;
       },
-      select: { id: true, name: true, type: true },
-    });
-    await audit(prisma, {
-      actorUserId: userId,
-      businessId: business.id,
-      action: 'business.create',
-    });
+      { timeout: 20_000 },
+    );
     res.status(201).json(business);
   });
 

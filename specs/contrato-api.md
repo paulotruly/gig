@@ -15,7 +15,7 @@ Fonte: [09] §06 e [decisão 0003](decisoes/0003-padroes-para-as-lacunas-do-mvp.
 | `POST /auth/refresh` | Renovar sessão | Empreendedor e parceiro |
 | `POST /auth/logout` | Encerrar sessão | Empreendedor e parceiro |
 | `GET /auth/me` | Ver o usuário da sessão | Empreendedor e parceiro |
-| `POST /businesses`, `GET /businesses` | Criar e listar negócios (a lista traz o saldo informado) | Empreendedor |
+| `POST /businesses`, `GET /businesses` | Criar e listar negócios (a lista traz o saldo informado). Com `SIMULATION_MODE=true`, o negócio criado já vem com dados fictícios ([025](funcionalidades/025-ambiente-simulado.md)) | Empreendedor |
 | `PUT /businesses/:id/cash-balance` | Informar o saldo atual | Dono |
 | `POST /businesses/:id/members`, `DELETE /businesses/:id/members/:userId` | Autorizar e remover contador | Dono |
 | `GET /businesses/:id/consents` | Listar consentimentos | Dono |

@@ -25,6 +25,13 @@ const envSchema = z
     GOOGLE_CLIENT_SECRET: optionalSecret,
     WHATSAPP_APP_SECRET: optionalSecret,
     WHATSAPP_VERIFY_TOKEN: optionalSecret,
+    // Ambiente simulado (funcionalidade 025): só o texto "true" liga.
+    SIMULATION_MODE: z
+      .preprocess(
+        (value) => (value === '' ? undefined : value),
+        z.enum(['true', 'false']).optional(),
+      )
+      .transform((value) => value === 'true'),
   })
   .superRefine((env, context) => {
     if (env.NODE_ENV === 'production' && !env.DATABASE_URL_PARTNER_METRICS) {

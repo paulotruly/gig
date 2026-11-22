@@ -6,3 +6,4 @@ export * from './rules/dates';
 export * from './rules/forecast';
 export * from './rules/money';
 export * from './rules/params';
+export * from './simulation';
