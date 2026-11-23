@@ -1,6 +1,6 @@
 # 027: simulação dos negócios antigos
 
-**Situação:** `em andamento`
+**Situação:** `concluída`
 **Depende de:** 025
 **Referências:** `specs/constituicao.md` (regras 7, 9 e 18), [decisão 0005](../decisoes/0005-producao-como-ambiente-simulado.md)
 
@@ -33,15 +33,17 @@ A [025](025-ambiente-simulado.md) só preenche negócios criados depois de ligar
 
 - `apps/api/src/modules/simulation.ts`: `populateSimulatedBusiness` reaproveita o consentimento concedido e pula trilhas com progresso; `simulateEmptyBusinesses` seleciona e simula os negócios vazios.
 - `apps/api/src/cli/simulate-businesses.ts`: comando de operação, com `--dry-run`.
-- Na produção: `docker compose exec api node dist/cli/simulate-businesses.js`.
+- Na produção: `docker compose exec api node apps/api/dist/cli/simulate-businesses.js`.
 
 ## Tarefas
 
 - [x] T1: seleção e simulação dos negócios vazios.
 - [x] T2: comando de operação.
 - [x] T3: teste de integração.
-- [ ] T4: execução na produção.
+- [x] T4: execução na produção.
 
 ## Notas
 
 O teste de integração (`apps/api/test/integration/simulation.test.ts`) cobre C1 a C4 e passou contra o MySQL 8.0. Um consentimento revogado deixa o negócio de fora mesmo que exista outro concedido depois: na dúvida, o comando não trata dados de quem recusou.
+
+Em 22/11/2026, o comando rodou em produção. O `--dry-run` listou os negócios 1 e 2, criados antes do modo; o 3 já tinha sido simulado na criação. O negócio 1 (startup) recebeu `aporte-de-investidor`, e o 2 (MEI), `crescimento`. O worker calculou a previsão dos dois, e o 1 ganhou o alerta de fôlego curto.

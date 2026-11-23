@@ -77,8 +77,8 @@ DATABASE_URL="..." npm run partner:create --workspace @gig/api -- "Nome" ACCELER
 Com `SIMULATION_MODE=true`, cada negócio novo nasce com dados fictícios sorteados. Para simular também os negócios vazios criados antes do modo, use o comando abaixo. Com `--dry-run`, ele só lista os que seriam simulados.
 
 ```sh
-docker compose exec api node dist/cli/simulate-businesses.js --dry-run
-docker compose exec api node dist/cli/simulate-businesses.js
+docker compose exec api node apps/api/dist/cli/simulate-businesses.js --dry-run
+docker compose exec api node apps/api/dist/cli/simulate-businesses.js
 ```
 
 ## Implantação
