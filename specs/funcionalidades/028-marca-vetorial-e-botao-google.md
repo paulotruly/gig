@@ -1,6 +1,6 @@
 # 028: marca vetorial e botão do Google
 
-**Situação:** `em andamento`
+**Situação:** `concluída`
 **Depende de:** 020 (login com Google), 026 (PWA)
 **Referências:** capturas da tela de login enviadas pela equipe em 22/11/2026
 
@@ -25,7 +25,7 @@ Deixar a marca do GiG nítida em todos os lugares e alinhar o botão "Entrar com
 
 - [x] C1: o login e o cadastro mostram o logo em SVG e o botão novo do Google.
 - [x] C2: `/favicon.ico`, `/icon.png` e `/apple-icon.png` respondem 200 em desenvolvimento.
-- [ ] C3: depois da implantação, https://gigreat.online mostra o logo, o botão e o ícone da aba novos.
+- [x] C3: depois da implantação, https://gigreat.online mostra o logo, o botão e o ícone da aba novos.
 
 ## Plano técnico
 
@@ -41,10 +41,11 @@ Deixar a marca do GiG nítida em todos os lugares e alinhar o botão "Entrar com
 - [x] T2: trocar os PNGs do login e do cabeçalho pelo componente.
 - [x] T3: gerar de novo favicon, ícones da aba, da Apple e do PWA.
 - [x] T4: refazer o botão do Google.
-- [ ] T5: implantar e conferir em produção (C3).
+- [x] T5: implantar e conferir em produção (C3).
 
 ## Notas
 
 - O ícone da aba é um quadrado branco de cantos arredondados, com traço mais grosso que o do logo, para ler em 16 px.
 - Na máquina local havia cópias não versionadas de `favicon.ico`, `icon.png` e `apple-icon.png` em `apps/web/src/app/`. Elas conflitavam com as de `public/`, e o Next respondia 500. Os ícones ficam só em `public/`, referenciados pelo `layout.tsx`.
 - `logo-transparent.png` e `logo-greed-is-great.png` ficaram sem uso, mas continuam em `public/`.
+- Em 22/11/2026, https://gigreat.online passou a servir o `sw.js` com `gig-v2`, o `favicon.ico` novo e o login com o logo e o botão novos.
