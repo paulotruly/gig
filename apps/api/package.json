@@ -10,7 +10,8 @@
     "test": "jest",
     "build": "tsc -p tsconfig.json",
     "test:integration": "jest --config jest.integration.config.js --runInBand",
-    "partner:create": "node dist/cli/create-partner.js"
+    "partner:create": "node dist/cli/create-partner.js",
+    "businesses:simulate": "node dist/cli/simulate-businesses.js"
   },
   "dependencies": {
     "@gig/db": "^0.1.0",
