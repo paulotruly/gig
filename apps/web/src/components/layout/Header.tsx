@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Bell, Eye, EyeOff, FolderUp } from '@/components/ui/icons';
+import { Logo } from '@/components/ui/Logo';
 import { BUSINESS_TYPE_NAMES, firstName, initials } from '@/lib/format';
 import { useSession } from '@/lib/session';
 import { type ScreenId } from './Sidebar';
@@ -38,11 +39,7 @@ export function Header({
           className="flex items-center gap-3 cursor-pointer group select-none transition-transform active:scale-95"
           title="Ir para o início"
         >
-          <img
-            src="/logo-transparent.png"
-            alt="Greed is Great"
-            className="h-10 sm:h-11 md:h-12 lg:h-[46px] w-auto object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-2xs"
-          />
+          <Logo className="h-9 sm:h-10 lg:h-11 w-auto transition-transform duration-200 group-hover:scale-105" />
         </button>
 
         <div className="flex items-center gap-2.5">

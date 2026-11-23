@@ -1,7 +1,7 @@
 // Service worker do GiG.
 // Só guarda arquivos públicos (ícones, estáticos do Next e a página offline).
 // Nunca guarda /api nem /webhooks: dados financeiros não ficam no cache do aparelho.
-const VERSAO = 'gig-v1';
+const VERSAO = 'gig-v2';
 const OFFLINE = '/offline.html';
 const PRECACHE = [OFFLINE, '/icons/icon-192.png', '/icons/icon-512.png'];
 
